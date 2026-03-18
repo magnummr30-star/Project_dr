@@ -1,0 +1,54 @@
+<svg width="1200" height="760" viewBox="0 0 1200 760" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg2" x1="184" y1="69" x2="1007" y2="689" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F7FAF8"/>
+      <stop offset="0.6" stop-color="#EBF2EE"/>
+      <stop offset="1" stop-color="#DDE7E1"/>
+    </linearGradient>
+    <linearGradient id="card2" x1="278" y1="194" x2="936" y2="558" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#EDF4EF"/>
+      <stop offset="1" stop-color="#E4EDE8"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="760" rx="36" fill="url(#bg2)"/>
+  <circle cx="202" cy="121" r="82" fill="#E9F0EB"/>
+  <circle cx="969" cy="111" r="88" fill="#E5EEF1"/>
+
+  <rect x="242" y="155" width="716" height="442" rx="34" fill="url(#card2)" stroke="#D6E2DA" stroke-width="8"/>
+  <rect x="286" y="206" width="324" height="148" rx="26" fill="#FBFDFC"/>
+  <rect x="642" y="206" width="270" height="148" rx="26" fill="#FBFDFC"/>
+  <rect x="286" y="388" width="626" height="168" rx="26" fill="#FBFDFC"/>
+
+  <text x="326" y="242" fill="#244B3E" font-family="Arial, sans-serif" font-size="18" font-weight="700">Training and operating readiness</text>
+  <path d="M344 317C369 291 393 275 422 275C451 275 477 293 504 305C528 316 553 321 578 312" stroke="#2D6654" stroke-width="10" stroke-linecap="round"/>
+  <circle cx="391" cy="278" r="7" fill="#2D6654"/>
+  <circle cx="455" cy="286" r="7" fill="#2D6654"/>
+  <circle cx="522" cy="312" r="7" fill="#2D6654"/>
+  <text x="326" y="337" fill="#60746C" font-family="Arial, sans-serif" font-size="16">People, process, and factory capability alignment</text>
+
+  <text x="676" y="242" fill="#244B3E" font-family="Arial, sans-serif" font-size="18" font-weight="700">Production setup</text>
+  <rect x="676" y="263" width="98" height="44" rx="16" fill="#2B5E4F"/>
+  <rect x="790" y="268" width="86" height="12" rx="6" fill="#D6E2D8"/>
+  <rect x="790" y="291" width="112" height="12" rx="6" fill="#D6E2D8"/>
+  <text x="676" y="334" fill="#60746C" font-family="Arial, sans-serif" font-size="16">Lines, safety, and operating standards</text>
+
+  <rect x="326" y="424" width="150" height="88" rx="20" fill="#EDF4F0"/>
+  <rect x="520" y="424" width="150" height="88" rx="20" fill="#EDF1F4"/>
+  <rect x="714" y="424" width="150" height="88" rx="20" fill="#EDF4F0"/>
+  <text x="349" y="449" fill="#5F726B" font-family="Arial, sans-serif" font-size="15">Skilled labor</text>
+  <text x="544" y="449" fill="#5F726B" font-family="Arial, sans-serif" font-size="15">Process control</text>
+  <text x="741" y="449" fill="#5F726B" font-family="Arial, sans-serif" font-size="15">Technical training</text>
+  <path d="M353 490L388 455L418 485L450 458" stroke="#2D6654" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M556 495H630" stroke="#4E6A77" stroke-width="9" stroke-linecap="round"/>
+  <path d="M556 469H606" stroke="#A7BBC6" stroke-width="9" stroke-linecap="round"/>
+  <path d="M747 494C760 473 775 458 797 451C799 478 791 498 772 513C760 510 752 504 747 494Z" fill="#2D6654"/>
+
+  <rect x="101" y="554" width="252" height="106" rx="28" fill="#FCFEFC" stroke="#D7E2DA" stroke-width="6"/>
+  <text x="145" y="595" fill="#244B3E" font-family="Arial, sans-serif" font-size="20" font-weight="700">Workforce Enablement</text>
+  <text x="145" y="624" fill="#60746C" font-family="Arial, sans-serif" font-size="17">Training, discipline, and readiness</text>
+
+  <rect x="860" y="88" width="230" height="104" rx="28" fill="#FCFEFC" stroke="#D7E2DA" stroke-width="6"/>
+  <text x="902" y="131" fill="#244B3E" font-family="Arial, sans-serif" font-size="19" font-weight="700">Smart Factory Transition</text>
+  <text x="902" y="158" fill="#60746C" font-family="Arial, sans-serif" font-size="16">People and process modernization</text>
+</svg>

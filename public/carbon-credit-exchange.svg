@@ -1,0 +1,63 @@
+<svg width="1200" height="760" viewBox="0 0 1200 760" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg1" x1="149" y1="84" x2="1036" y2="687" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F5F9F6"/>
+      <stop offset="0.58" stop-color="#E7F0EA"/>
+      <stop offset="1" stop-color="#DDE8E3"/>
+    </linearGradient>
+    <linearGradient id="screen1" x1="300" y1="161" x2="902" y2="575" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#173F4C"/>
+      <stop offset="1" stop-color="#214C5B"/>
+    </linearGradient>
+    <linearGradient id="line1" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#91D18F"/>
+      <stop offset="1" stop-color="#2E7A5A"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="760" rx="36" fill="url(#bg1)"/>
+  <circle cx="1004" cy="127" r="78" fill="#E7F0EB"/>
+  <circle cx="919" cy="94" r="30" fill="#D8E5DD"/>
+
+  <rect x="262" y="143" width="676" height="434" rx="34" fill="url(#screen1)"/>
+  <rect x="297" y="178" width="298" height="164" rx="24" fill="#F8FBF9"/>
+  <rect x="619" y="178" width="284" height="164" rx="24" fill="#F8FBF9"/>
+  <rect x="297" y="366" width="606" height="176" rx="24" fill="#F8FBF9"/>
+
+  <text x="333" y="218" fill="#244B3E" font-family="Arial, sans-serif" font-size="18" font-weight="700">Carbon value trajectory</text>
+  <path d="M333 292C374 266 406 248 450 250C490 251 521 278 559 278" stroke="url(#line1)" stroke-width="10" stroke-linecap="round"/>
+  <circle cx="382" cy="263" r="7" fill="#2E7A5A"/>
+  <circle cx="462" cy="251" r="7" fill="#2E7A5A"/>
+  <circle cx="531" cy="273" r="7" fill="#2E7A5A"/>
+  <path d="M333 305H557" stroke="#D3E0D8" stroke-width="8" stroke-linecap="round"/>
+  <text x="333" y="326" fill="#60746C" font-family="Arial, sans-serif" font-size="16">Credits, incentives, and reporting integration</text>
+
+  <text x="654" y="218" fill="#244B3E" font-family="Arial, sans-serif" font-size="18" font-weight="700">Market registration</text>
+  <rect x="654" y="242" width="88" height="34" rx="17" fill="#214C5B"/>
+  <text x="675" y="265" fill="#F9FBFC" font-family="Arial, sans-serif" font-size="19" font-weight="700">CO₂</text>
+  <rect x="758" y="246" width="115" height="12" rx="6" fill="#D6E2E8"/>
+  <rect x="758" y="268" width="90" height="12" rx="6" fill="#D6E2E8"/>
+  <rect x="758" y="290" width="62" height="12" rx="6" fill="#D6E2E8"/>
+  <text x="654" y="324" fill="#60746C" font-family="Arial, sans-serif" font-size="16">Local and international trading pathways</text>
+
+  <rect x="334" y="405" width="160" height="96" rx="20" fill="#EDF4F0"/>
+  <rect x="520" y="405" width="160" height="96" rx="20" fill="#EEF2F5"/>
+  <rect x="706" y="405" width="160" height="96" rx="20" fill="#EDF4F0"/>
+  <text x="360" y="431" fill="#5F726B" font-family="Arial, sans-serif" font-size="15">Emission baseline</text>
+  <text x="551" y="431" fill="#5F726B" font-family="Arial, sans-serif" font-size="15">Finance channel</text>
+  <text x="739" y="431" fill="#5F726B" font-family="Arial, sans-serif" font-size="15">Credit registration</text>
+  <path d="M362 476L389 444L420 464L459 430" stroke="#2E7A5A" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M558 481C558 458 576 440 599 440C622 440 640 458 640 481" stroke="#4F6975" stroke-width="9" stroke-linecap="round"/>
+  <path d="M744 474H822" stroke="#2E7A5A" stroke-width="9" stroke-linecap="round"/>
+  <path d="M744 448H792" stroke="#A6BAC4" stroke-width="9" stroke-linecap="round"/>
+
+  <rect x="103" y="548" width="248" height="110" rx="28" fill="#FCFEFC" stroke="#D7E2DA" stroke-width="6"/>
+  <text x="145" y="591" fill="#244B3E" font-family="Arial, sans-serif" font-size="20" font-weight="700">Carbon Credits</text>
+  <text x="145" y="620" fill="#60746C" font-family="Arial, sans-serif" font-size="17">Commercial value from compliance</text>
+  <circle cx="305" cy="600" r="23" fill="#E0ECE4"/>
+  <path d="M298 607C315 588 335 573 359 565C353 594 335 618 309 630C300 626 294 616 298 607Z" fill="#2D6654"/>
+
+  <rect x="875" y="91" width="218" height="102" rx="28" fill="#FCFEFC" stroke="#D7E2DA" stroke-width="6"/>
+  <text x="914" y="133" fill="#244B3E" font-family="Arial, sans-serif" font-size="19" font-weight="700">Incentives and Traceability</text>
+  <text x="914" y="160" fill="#60746C" font-family="Arial, sans-serif" font-size="16">Governance for carbon value</text>
+</svg>
