@@ -7,6 +7,8 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'index.html'),
         journey: resolve(__dirname, 'client-journey.html'),
+        services: resolve(__dirname, 'services.html'),
+        service: resolve(__dirname, 'service.html'),
       },
     },
   },
