@@ -801,9 +801,9 @@ function render() {
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
             <span class="sidebar-link-label">${copy.nav.services}</span>
           </a>
-          <a href="#catalog" class="sidebar-link" data-label="${state.lang === 'ar' ? 'الكتالوج' : 'Catalog'}">
+          <a href="/services.html" class="sidebar-link" data-label="${state.lang === 'ar' ? 'المساعد الذكي' : 'AI'}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-            <span class="sidebar-link-label">${state.lang === 'ar' ? 'الكتالوج' : 'Catalog'}</span>
+            <span class="sidebar-link-label">${state.lang === 'ar' ? 'المساعد' : 'AI'}</span>
           </a>
           <a href="#solutions" class="sidebar-link" data-label="${copy.nav.journey}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
@@ -869,7 +869,7 @@ function render() {
         <a href="/client-journey.html">${state.lang === 'ar' ? 'رحلة العميل' : 'Client Journey'}</a>
         <a href="#top">${state.lang === 'ar' ? 'الرئيسية' : 'Home'}</a>
         <a href="#platform">${copy.nav.services}</a>
-        <a href="#catalog">${state.lang === 'ar' ? 'الكتالوج' : 'Catalog'}</a>
+        <a href="/services.html">${state.lang === 'ar' ? 'المستشار الذكي' : 'AI Concierge'}</a>
         <a href="#solutions">${copy.nav.journey}</a>
         <a href="#impact">${copy.nav.impact}</a>
         <a href="#testimonials">${state.lang === 'ar' ? 'الشهادات' : 'Reviews'}</a>
