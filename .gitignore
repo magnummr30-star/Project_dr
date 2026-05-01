@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+
+# Next.js build output
+.next/
+out/
+
+# Production and deployment caches
+.vercel/
+.netlify/
+dist/
+build/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Runtime storage and local submissions
+storage/
+
+# Local browser automation profiles
+.chrome*/
+.chrome-*/
+
+# Local logs and screenshots
+*.log
+*.err.log
+*.png
+
+# Keep application images under public
+!public/**/*.png
+!public/**/*.jpg
+!public/**/*.jpeg
+!public/**/*.webp
+!public/**/*.svg
+!public/**/*.gif
+
+# Large source archive already extracted into public/images/img
+public/images/img.zip
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

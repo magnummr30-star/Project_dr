@@ -1,0 +1,20 @@
+{
+  "name": "green-bexon-next",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "generate:bexon": "node tools/generate-bexon-components.mjs"
+  },
+  "dependencies": {
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest"
+  },
+  "overrides": {
+    "postcss": "8.5.10"
+  },
+  "devDependencies": {}
+}
