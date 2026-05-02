@@ -2,33 +2,89 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getClientPortalSession, saveClientPortalSession } from "@/lib/clientPortalSession";
 
 export function ClientLoginPage() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [loginStatus, setLoginStatus] = useState("idle");
+  const [isRecoveryOpen, setIsRecoveryOpen] = useState(false);
+  const [recoveryStatus, setRecoveryStatus] = useState("idle");
 
-  function handleSubmit(event) {
+  useEffect(() => {
+    const savedClient = getClientPortalSession({ refreshActivity: true });
+
+    if (savedClient) {
+      router.replace("/clients/dashboard");
+    }
+  }, [router]);
+
+  async function handleSubmit(event) {
     event.preventDefault();
     const form = event.currentTarget;
     const formData = new FormData(form);
-    const clientName = String(formData.get("clientName") || "عميل الشركة").trim();
-    const projectCode = String(formData.get("projectCode") || "").trim();
+    const payload = Object.fromEntries(formData.entries());
 
     setIsSubmitting(true);
+    setLoginStatus("idle");
 
-    window.sessionStorage.setItem(
-      "greenClientPortal",
-      JSON.stringify({
-        clientName: clientName || "عميل الشركة",
-        projectCode: projectCode || "GG-2026",
-        loggedAt: new Date().toISOString()
-      })
-    );
+    try {
+      const response = await fetch("/api/client-login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
 
-    window.setTimeout(() => {
-      router.push("/clients/dashboard");
-    }, 420);
+      if (response.status === 401) {
+        setLoginStatus("invalid");
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error("Login failed");
+      }
+
+      const result = await response.json();
+
+      saveClientPortalSession(result.client);
+      router.replace("/clients/dashboard");
+    } catch (error) {
+      setLoginStatus("error");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  async function handlePasswordRecovery(event) {
+    event.preventDefault();
+    setRecoveryStatus("sending");
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    const payload = Object.fromEntries(formData.entries());
+
+    try {
+      const response = await fetch("/api/client-password-recovery", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      if (response.status === 404) {
+        setRecoveryStatus("not-found");
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error("Recovery request failed");
+      }
+
+      form.reset();
+      setRecoveryStatus("success");
+    } catch (error) {
+      setRecoveryStatus("error");
+    }
   }
 
   return (
@@ -47,9 +103,9 @@ export function ClientLoginPage() {
           <Link href="/#contact">تواصل</Link>
         </nav>
         <div className="showcase-nav-actions">
-          <Link className="showcase-client-login" href="/clients/dashboard" aria-label="لوحة العملاء" title="لوحة العملاء">
-            <i className="fa-solid fa-table-columns" aria-hidden="true" />
-            <span>لوحة العملاء</span>
+          <Link className="showcase-client-login" href="/clients/login" aria-label="دخول العملاء" title="دخول العملاء">
+            <i className="fa-solid fa-user-shield" aria-hidden="true" />
+            <span>دخول العملاء</span>
           </Link>
         </div>
       </header>
@@ -79,39 +135,73 @@ export function ClientLoginPage() {
             </div>
           </div>
 
-          <form className="client-login-card" onSubmit={handleSubmit}>
-            <div className="client-login-card__header">
-              <i className="fa-solid fa-user-shield" aria-hidden="true" />
-              <div>
-                <span>دخول آمن</span>
-                <h2>بيانات العميل</h2>
+          <div className="client-login-card">
+            <form className="client-login-card__form" onSubmit={handleSubmit}>
+              <div className="client-login-card__header">
+                <i className="fa-solid fa-user-shield" aria-hidden="true" />
+                <div>
+                  <span>دخول آمن</span>
+                  <h2>بيانات العميل</h2>
+                </div>
               </div>
-            </div>
 
-            <label>
-              <span>اسم العميل أو الشركة</span>
-              <input name="clientName" type="text" placeholder="مثال: شركة المستقبل الصناعية" required />
-            </label>
+              <label>
+                <span>رقم الهاتف</span>
+                <input name="phone" type="tel" inputMode="tel" placeholder="رقم واتساب المسجل في الاستشارة" required />
+              </label>
 
-            <label>
-              <span>رقم المشروع أو الهاتف</span>
-              <input name="projectCode" type="text" placeholder="مثال: GG-2026 أو رقم الهاتف" required />
-            </label>
+              <label>
+                <span>الرقم السري</span>
+                <input name="password" type="password" placeholder="أدخل الرقم السري" required />
+              </label>
 
-            <label>
-              <span>كلمة المرور</span>
-              <input name="password" type="password" placeholder="أدخل كلمة المرور" required />
-            </label>
+              {loginStatus === "invalid" ? (
+                <p className="client-login-card__alert is-error">رقم الهاتف أو الرقم السري غير صحيح.</p>
+              ) : null}
 
-            <button className="client-login-card__submit" type="submit" disabled={isSubmitting}>
-              <i className="fa-solid fa-arrow-left-long" aria-hidden="true" />
-              {isSubmitting ? "جاري الدخول..." : "الدخول إلى لوحة العملاء"}
+              {loginStatus === "error" ? (
+                <p className="client-login-card__alert is-error">تعذر تسجيل الدخول الآن، حاول مرة أخرى.</p>
+              ) : null}
+
+              <button className="client-login-card__submit" type="submit" disabled={isSubmitting}>
+                <i className="fa-solid fa-arrow-left-long" aria-hidden="true" />
+                {isSubmitting ? "جاري الدخول..." : "الدخول إلى لوحة العملاء"}
+              </button>
+            </form>
+
+            <button
+              className="client-login-card__forgot"
+              type="button"
+              onClick={() => {
+                setIsRecoveryOpen((currentValue) => !currentValue);
+                setRecoveryStatus("idle");
+              }}
+            >
+              نسيت الرقم السري؟
             </button>
 
+            {isRecoveryOpen ? (
+              <form className="client-password-recovery" onSubmit={handlePasswordRecovery}>
+                <strong>استرجاع الرقم السري</strong>
+                <p>أدخل رقم الهاتف المسجل، وسيتم إرسال بيانات الحساب على واتساب.</p>
+                <label>
+                  <span>رقم الهاتف</span>
+                  <input name="phone" type="tel" inputMode="tel" placeholder="رقم واتساب المسجل في الاستشارة" required />
+                </label>
+                <button className="client-login-card__submit" type="submit" disabled={recoveryStatus === "sending"}>
+                  <i className="fa-solid fa-key" aria-hidden="true" />
+                  {recoveryStatus === "sending" ? "جاري إرسال البيانات..." : "إرسال بيانات الحساب"}
+                </button>
+                {recoveryStatus === "success" ? <p className="client-login-card__alert is-success">تم إرسال بيانات الحساب على واتساب.</p> : null}
+                {recoveryStatus === "not-found" ? <p className="client-login-card__alert is-error">لا يوجد حساب مسجل بهذا الرقم.</p> : null}
+                {recoveryStatus === "error" ? <p className="client-login-card__alert is-error">تعذر إرسال بيانات الحساب، حاول مرة أخرى.</p> : null}
+              </form>
+            ) : null}
+
             <p className="client-login-card__note">
-              هذه واجهة دخول جاهزة للربط لاحقًا بنظام العملاء الحقيقي وقاعدة بيانات الحسابات.
+              في حالة نسيان الرقم السري يمكن طلب استرجاعه من هذه الشاشة.
             </p>
-          </form>
+          </div>
         </div>
       </section>
     </main>

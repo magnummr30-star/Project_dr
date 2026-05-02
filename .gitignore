@@ -27,6 +27,7 @@ storage/
 *.log
 *.err.log
 *.png
+info.txt
 
 # Keep application images under public
 !public/**/*.png

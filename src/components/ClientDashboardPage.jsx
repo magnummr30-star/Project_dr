@@ -1,7 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import {
+  clearClientPortalSession,
+  getClientPortalSession,
+  refreshClientPortalActivity
+} from "@/lib/clientPortalSession";
 
 const projectSteps = [
   { title: "استلام الطلب", status: "completed", date: "28 أبريل 2026" },
@@ -22,19 +28,82 @@ const messages = [
   "سيتم إرسال قائمة المتطلبات النهائية بعد اكتمال الملفات."
 ];
 
+const defaultClient = {
+  clientName: "عميل الشركة",
+  projectCode: "",
+  phone: "",
+  serviceTitle: "استشارة متخصصة",
+  requestStatus: "new",
+  createdAt: ""
+};
+
 export function ClientDashboardPage() {
-  const [client, setClient] = useState({ clientName: "عميل الشركة", projectCode: "GG-2026" });
+  const router = useRouter();
+  const [client, setClient] = useState(null);
 
   useEffect(() => {
-    try {
-      const stored = window.sessionStorage.getItem("greenClientPortal");
-      if (stored) {
-        setClient(JSON.parse(stored));
-      }
-    } catch (error) {
-      setClient({ clientName: "عميل الشركة", projectCode: "GG-2026" });
+    const savedClient = getClientPortalSession({ refreshActivity: true });
+
+    if (!savedClient) {
+      router.replace("/clients/login");
+      return undefined;
     }
-  }, []);
+
+    setClient({ ...defaultClient, ...savedClient });
+
+    let lastActivitySync = Date.now();
+
+    function handleActivity() {
+      const now = Date.now();
+
+      if (now - lastActivitySync < 60000) {
+        return;
+      }
+
+      lastActivitySync = now;
+      refreshClientPortalActivity();
+    }
+
+    function verifySession() {
+      const activeClient = getClientPortalSession();
+
+      if (!activeClient) {
+        router.replace("/clients/login");
+      }
+    }
+
+    const activityEvents = ["click", "keydown", "touchstart", "scroll"];
+    activityEvents.forEach((eventName) => window.addEventListener(eventName, handleActivity, { passive: true }));
+    const sessionTimer = window.setInterval(verifySession, 60000);
+
+    return () => {
+      activityEvents.forEach((eventName) => window.removeEventListener(eventName, handleActivity));
+      window.clearInterval(sessionTimer);
+    };
+  }, [router]);
+
+  function handleLogout() {
+    clearClientPortalSession();
+    router.replace("/clients/login");
+  }
+
+  if (!client) {
+    return (
+      <main className="green-showcase client-portal-page client-dashboard-page" dir="rtl">
+        <section className="client-dashboard">
+          <div className="showcase-container">
+            <div className="client-dashboard__welcome">
+              <div>
+                <span className="showcase-kicker">جاري التحقق</span>
+                <h1>الرجاء تسجيل الدخول</h1>
+                <p>سيتم تحويلك إلى شاشة دخول العملاء للتحقق من رقم الهاتف والرقم السري.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    );
+  }
 
   return (
     <main className="green-showcase client-portal-page client-dashboard-page" dir="rtl">
@@ -52,10 +121,10 @@ export function ClientDashboardPage() {
           <Link href="/#contact">تواصل</Link>
         </nav>
         <div className="showcase-nav-actions">
-          <Link className="showcase-nav-cta" href="/clients/login">
+          <button className="showcase-nav-cta" type="button" onClick={handleLogout}>
             <i className="fa-solid fa-right-from-bracket" aria-hidden="true" />
             <span>تسجيل خروج</span>
-          </Link>
+          </button>
         </div>
       </header>
 
@@ -68,9 +137,9 @@ export function ClientDashboardPage() {
               <p>هنا تجد ملخص مشروعك، المستندات المطلوبة، رسائل الفريق، والخطوة التالية في مسار الخدمة.</p>
             </div>
             <div className="client-dashboard__status">
-              <small>حالة المشروع</small>
-              <strong>قيد المراجعة</strong>
-              <span>آخر تحديث: 1 مايو 2026</span>
+              <small>الخدمة المطلوبة</small>
+              <strong>{client.serviceTitle || "استشارة متخصصة"}</strong>
+              <span>{client.phone ? `رقم الهاتف: ${client.phone}` : `رقم الطلب: ${client.projectCode}`}</span>
             </div>
           </div>
 

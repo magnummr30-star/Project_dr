@@ -48,8 +48,36 @@ export function FloatingInquiryWidget() {
     };
   }, [isOpen, isClientPortal]);
 
+  useEffect(() => {
+    if (isClientPortal) {
+      return undefined;
+    }
+
+    const handleWidgetOpen = (event) => {
+      if (event.detail !== "inquiry") {
+        setIsOpen(false);
+      }
+    };
+
+    window.addEventListener("green-floating-widget-open", handleWidgetOpen);
+
+    return () => {
+      window.removeEventListener("green-floating-widget-open", handleWidgetOpen);
+    };
+  }, [isClientPortal]);
+
   const closeWidget = () => {
     setIsOpen(false);
+  };
+
+  const toggleWidget = () => {
+    if (isOpen) {
+      setIsOpen(false);
+      return;
+    }
+
+    setIsOpen(true);
+    window.dispatchEvent(new CustomEvent("green-floating-widget-open", { detail: "inquiry" }));
   };
 
   const resizeTextarea = (element) => {
@@ -128,7 +156,7 @@ export function FloatingInquiryWidget() {
       <button
         className="floating-inquiry-toggle"
         type="button"
-        onClick={() => setIsOpen((current) => !current)}
+        onClick={toggleWidget}
         aria-controls="floating-inquiry-panel"
         aria-expanded={isOpen}
         aria-label={isOpen ? "إخفاء نموذج الاستفسار" : "إظهار نموذج الاستفسار"}

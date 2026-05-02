@@ -69,8 +69,36 @@ export function FloatingContactBanner() {
     };
   }, [isOpen, isClientPortal]);
 
+  useEffect(() => {
+    if (isClientPortal) {
+      return undefined;
+    }
+
+    const handleWidgetOpen = (event) => {
+      if (event.detail !== "contact") {
+        setIsOpen(false);
+      }
+    };
+
+    window.addEventListener("green-floating-widget-open", handleWidgetOpen);
+
+    return () => {
+      window.removeEventListener("green-floating-widget-open", handleWidgetOpen);
+    };
+  }, [isClientPortal]);
+
   const closeBanner = () => {
     setIsOpen(false);
+  };
+
+  const toggleBanner = () => {
+    if (isOpen) {
+      setIsOpen(false);
+      return;
+    }
+
+    setIsOpen(true);
+    window.dispatchEvent(new CustomEvent("green-floating-widget-open", { detail: "contact" }));
   };
 
   if (isClientPortal) {
@@ -123,7 +151,7 @@ export function FloatingContactBanner() {
       <button
         className="floating-contact-toggle"
         type="button"
-        onClick={() => setIsOpen((current) => !current)}
+        onClick={toggleBanner}
         aria-controls="floating-contact-panel"
         aria-expanded={isOpen}
         aria-label={isOpen ? "إخفاء بيانات التواصل" : "إظهار بيانات التواصل"}

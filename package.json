@@ -9,12 +9,12 @@
     "generate:bexon": "node tools/generate-bexon-components.mjs"
   },
   "dependencies": {
+    "mongodb": "^7.2.0",
     "next": "latest",
     "react": "latest",
     "react-dom": "latest"
   },
   "overrides": {
     "postcss": "8.5.10"
-  },
-  "devDependencies": {}
+  }
 }

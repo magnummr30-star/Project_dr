@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { MobileAppNavigation } from "@/components/MobileAppNavigation";
 import { categoryNames, getRelatedServices, getServiceBySlug, services } from "@/data/services";
 import { getServiceDetail, getServicePageExperience } from "@/data/serviceDetails";
 import { absoluteUrl, companyName, defaultKeywords, jsonLdScript, organizationSchema, serviceUrl, siteUrl } from "@/lib/seo";
@@ -63,6 +64,22 @@ export default async function ServiceDetailPage({ params }) {
   const detail = getServiceDetail(service);
   const pageExperience = getServicePageExperience(service, detail);
   const relatedServices = getRelatedServices(service, 3);
+  const mobileMenuLinks = [
+    { href: "/", label: "الرئيسية", icon: "fa-solid fa-house" },
+    { href: "/#services", label: "كل الخدمات", icon: "fa-solid fa-layer-group" },
+    { href: "#service-summary", label: "ملخص الخدمة", icon: "fa-solid fa-file-lines" },
+    { href: "#video", label: "فيديو الخدمة", icon: "fa-solid fa-play" },
+    { href: "#service-output", label: "المخرجات", icon: "fa-solid fa-list-check" },
+    { href: "#service-roadmap", label: "مسار التنفيذ", icon: "fa-solid fa-route" },
+    { href: "#contact", label: "تواصل", icon: "fa-solid fa-headset" },
+    { href: "/clients/login", label: "دخول العملاء", icon: "fa-solid fa-user-lock" }
+  ];
+  const mobileBottomLinks = [
+    { href: "#service-summary", label: "الملخص", icon: "fa-solid fa-file-lines" },
+    { href: "#video", label: "الفيديو", icon: "fa-solid fa-play" },
+    { href: "#service-output", label: "المخرجات", icon: "fa-solid fa-list-check" },
+    { href: "#contact", label: "تواصل", icon: "fa-solid fa-headset" }
+  ];
   const pageUrl = serviceUrl(service.slug);
   const serviceStructuredData = {
     "@context": "https://schema.org",
@@ -150,7 +167,21 @@ export default async function ServiceDetailPage({ params }) {
               <span>اتصل الآن</span>
             </a>
           </div>
+          <MobileAppNavigation
+            title="تفاصيل الخدمة"
+            subtitle={service.title}
+            links={mobileMenuLinks}
+          />
         </header>
+
+        <nav className="mobile-app-bottom-nav" dir="rtl" aria-label="تنقل سريع">
+          {mobileBottomLinks.map((link) => (
+            <a href={link.href} key={`${link.href}-${link.label}`}>
+              <i className={link.icon} aria-hidden="true" />
+              <span>{link.label}</span>
+            </a>
+          ))}
+        </nav>
 
         <section
           className="service-detail-hero service-detail-hero--rich"
@@ -181,7 +212,15 @@ export default async function ServiceDetailPage({ params }) {
           </div>
         </section>
 
-        <section className="service-detail-content">
+        <nav className="showcase-container service-detail-mobile-tabs" aria-label="تنقل سريع داخل الخدمة">
+          <a href="#service-summary">الملخص</a>
+          <a href="#video">الفيديو</a>
+          <a href="#service-output">المخرجات</a>
+          <a href="#service-roadmap">مسار التنفيذ</a>
+          <a href="#contact">تواصل</a>
+        </nav>
+
+        <section className="service-detail-content" id="service-summary">
           <div className="showcase-container service-detail-content__grid">
             <aside className="service-detail-panel service-detail-panel--rich">
               <span>ملخص الخدمة</span>
@@ -254,7 +293,7 @@ export default async function ServiceDetailPage({ params }) {
                 </div>
               </section>
 
-              <div className="section-heading service-detail-section-heading">
+              <div className="section-heading service-detail-section-heading" id="service-output">
                 <span>ما الذي يحصل عليه العميل؟</span>
                 <h2>مخرجات عملية تساعدك على فهم قيمة الخدمة قبل التواصل.</h2>
               </div>
@@ -265,7 +304,6 @@ export default async function ServiceDetailPage({ params }) {
                     <span>{String(index + 1).padStart(2, "0")}</span>
                     <h3>{deliverable.title}</h3>
                     <p>{deliverable.text}</p>
-                    <p>نحوّل هذه النقطة إلى جزء واضح داخل ملف الخدمة حتى يعرف العميل ما سيتم تسليمه وما الخطوة التالية.</p>
                   </article>
                 ))}
               </div>
@@ -301,7 +339,7 @@ export default async function ServiceDetailPage({ params }) {
           </div>
         </section>
 
-        <section className="service-detail-process">
+        <section className="service-detail-process" id="service-roadmap">
           <div className="showcase-container">
             <div className="section-heading section-heading--split">
               <div>
@@ -316,7 +354,6 @@ export default async function ServiceDetailPage({ params }) {
                   <span>{String(index + 1).padStart(2, "0")}</span>
                   <h3>{step.title}</h3>
                   <p>{step.text}</p>
-                  <p>خطوة منظمة تجعل الخدمة قابلة للفهم والمتابعة، وتحوّل العنوان العام إلى إجراءات يمكن تنفيذها.</p>
                 </article>
               ))}
             </div>
@@ -362,7 +399,10 @@ export default async function ServiceDetailPage({ params }) {
                 {relatedServices.map((related) => (
                   <article className="service-tile service-product-card" key={related.id}>
                     <Link className="service-product-card__image" href={`/services/${related.slug}`}>
-                      <img src={related.image} alt={related.title} loading="lazy" />
+                      <picture>
+                        <source media="(max-width: 1180px)" srcSet={`/images/img-mobile/${related.id}.png`} />
+                        <img src={related.image} alt={related.title} loading="lazy" />
+                      </picture>
                       <span>{String(related.id).padStart(2, "0")}</span>
                     </Link>
                     <div className="service-product-card__body">

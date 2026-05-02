@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { MobileAppNavigation } from "@/components/MobileAppNavigation";
 import { categoryNames, pathSteps, services } from "@/data/services";
 
 const serviceImageElements = {
@@ -164,6 +165,20 @@ export function ServicesShowcasePage() {
   const featuredServices = services.filter((service) => [1, 11, 15, 18].includes(service.id));
   const heroService = services.find((service) => service.id === 15);
   const selectedNeed = consultationNeedOptions.find((option) => option.value === selectedConsultationNeed);
+  const mobileMenuLinks = [
+    { href: "#top", label: "الرئيسية", icon: "fa-solid fa-house" },
+    { href: "#services", label: "الخدمات", icon: "fa-solid fa-layer-group" },
+    { href: "#path", label: "المنهجية", icon: "fa-solid fa-route" },
+    { href: "#consultation", label: "استشارة", icon: "fa-solid fa-clipboard-list" },
+    { href: "#contact", label: "تواصل", icon: "fa-solid fa-headset" },
+    { href: "/clients/login", label: "دخول العملاء", icon: "fa-solid fa-user-lock" }
+  ];
+  const mobileBottomLinks = [
+    { href: "#services", label: "الخدمات", icon: "fa-solid fa-grid-2" },
+    { href: "#consultation", label: "استشارة", icon: "fa-solid fa-clipboard-check" },
+    { href: "#contact", label: "تواصل", icon: "fa-solid fa-headset" },
+    { href: "/clients/login", label: "العملاء", icon: "fa-solid fa-user-lock" }
+  ];
   const consultationServiceChoices = useMemo(() => {
     if (showAllConsultationServices) return services;
 
@@ -186,6 +201,16 @@ export function ServicesShowcasePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       });
+
+      if (response.status === 409) {
+        setConsultationStatus("duplicate");
+        return;
+      }
+
+      if (response.status === 422) {
+        setConsultationStatus("whatsapp-invalid");
+        return;
+      }
 
       if (!response.ok) {
         throw new Error("Request failed");
@@ -241,7 +266,7 @@ export function ServicesShowcasePage() {
           <a href="#top">الرئيسية</a>
           <a href="#services">الخدمات</a>
           <a href="#path">المنهجية</a>
-          <a href="#consultation">استشارة مجانية</a>
+          <a href="#consultation">استشارة متخصصة</a>
           <a href="#contact">تواصل</a>
         </nav>
         <div className="showcase-nav-actions">
@@ -254,7 +279,21 @@ export function ServicesShowcasePage() {
             <span>اتصل الآن</span>
           </a>
         </div>
+        <MobileAppNavigation
+          title="خبراء التطوير الصناعي"
+          subtitle="تنقل سريع كواجهة تطبيق"
+          links={mobileMenuLinks}
+        />
       </header>
+
+      <nav className="mobile-app-bottom-nav" dir="rtl" aria-label="تنقل سريع">
+        {mobileBottomLinks.map((link) => (
+          <a href={link.href} key={`${link.href}-${link.label}`}>
+            <i className={link.icon} aria-hidden="true" />
+            <span>{link.label}</span>
+          </a>
+        ))}
+      </nav>
 
       <section className="showcase-hero" id="top" aria-labelledby="hero-title">
         <div className="showcase-hero__bg" aria-hidden="true" />
@@ -275,7 +314,7 @@ export function ServicesShowcasePage() {
                 ابدأ مشروعك
               </a>
               <a className="showcase-button showcase-button--ghost" href="#consultation">
-                اطلب استشارة مجانية
+                اطلب استشارة
               </a>
             </div>
           </div>
@@ -289,7 +328,7 @@ export function ServicesShowcasePage() {
                 <div className="hero-board__content">
                   <span>{heroService.tag}</span>
                   <a className="hero-board__consult" href="#consultation" onClick={() => handleConsultationChoice(heroService.slug)}>
-                    اطلب استشارة مجانية
+                    اطلب استشارة
                     <span aria-hidden="true">←</span>
                   </a>
                 </div>
@@ -303,7 +342,7 @@ export function ServicesShowcasePage() {
                   </Link>
                   <span className="hero-board__tag">{service.tag}</span>
                   <a className="hero-board__consult hero-board__consult--small" href="#consultation" onClick={() => handleConsultationChoice(service.slug)}>
-                    استشارة مجانية
+                    استشارة
                   </a>
                 </article>
               ))}
@@ -396,7 +435,9 @@ export function ServicesShowcasePage() {
               return (
               <article className="service-tile service-product-card" data-service-id={service.id} key={service.id}>
                 <Link className="service-product-card__image" href={`/services/${service.slug}`}>
-                  <img src={service.image} alt={service.title} loading="lazy" />
+                  <picture>
+                    <img src={service.image} alt={service.title} loading="lazy" />
+                  </picture>
                   <span>{String(service.id).padStart(2, "0")}</span>
                 </Link>
                 <div className="service-product-card__body">
@@ -429,7 +470,7 @@ export function ServicesShowcasePage() {
                       <span aria-hidden="true">←</span>
                     </Link>
                     <a className="service-product-card__consult" href="#consultation" onClick={() => handleConsultationChoice(service.slug)}>
-                      <span className="service-product-card__consult-text" data-text="اطلب استشارة مجانية">اطلب استشارة مجانية</span>
+                      <span className="service-product-card__consult-text" data-text="اطلب استشارة">اطلب استشارة</span>
                     </a>
                   </div>
                 </div>
@@ -443,15 +484,15 @@ export function ServicesShowcasePage() {
       <section className="consultation-section" id="consultation" aria-labelledby="consultation-title">
         <div className="showcase-container consultation-shell">
           <div className="consultation-intro">
-            <span className="showcase-kicker">استشارة مجانية لمشروعك</span>
-            <h2 id="consultation-title">اطلب استشارة مجانية</h2>
+            <span className="showcase-kicker">استشارة متخصصة لمشروعك</span>
+            <h2 id="consultation-title">اطلب استشارة متخصصة</h2>
             <p>
               نصيحة: قبل أن تبدأ في الترخيص أو التمويل أو اختيار الخدمة، اترك لنا بياناتك لنحدد لك المسار الأنسب والخطوة التالية بوضوح.
             </p>
           </div>
 
           <div className="consultation-registration-layout">
-            <aside className="consultation-side-benefits consultation-side-benefits--right" aria-label="فوائد الاستشارة المجانية">
+            <aside className="consultation-side-benefits consultation-side-benefits--right" aria-label="فوائد الاستشارة المتخصصة">
               {consultationBenefits.slice(0, 2).map((benefit, index) => (
                 <article key={benefit.title}>
                   <span>{String(index + 1).padStart(2, "0")}</span>
@@ -461,15 +502,20 @@ export function ServicesShowcasePage() {
               ))}
             </aside>
 
-          <form className="consultation-form" id="consultation-form" onSubmit={handleConsultationSubmit}>
+          <form
+            aria-busy={consultationStatus === "sending"}
+            className={`consultation-form${consultationStatus === "sending" ? " consultation-form--saving" : ""}`}
+            id="consultation-form"
+            onSubmit={handleConsultationSubmit}
+          >
             <div className="consultation-form__header">
-              <span>استشارة مجانية</span>
+              <span>استشارة متخصصة</span>
               <h3>دعنا نحدد لك المسار الأنسب</h3>
               <p>اختر ما يناسب مشروعك خلال لحظات، وسيتواصل معك فريقنا بخطوة واضحة تساعدك على البدء بثقة.</p>
             </div>
 
-            <div className="consultation-form__promise" aria-label="مزايا الاستشارة المجانية">
-              <span>بدون رسوم</span>
+            <div className="consultation-form__promise" aria-label="مزايا الاستشارة المتخصصة">
+              <span>تقييم أولي</span>
               <span>رد سريع</span>
               <span>توجيه مناسب للمرحلة</span>
               <span>خطوة تالية واضحة</span>
@@ -491,7 +537,8 @@ export function ServicesShowcasePage() {
               </label>
               <label className="consultation-field consultation-field--wide-half">
                 رقم الجوال
-                <input name="phone" type="tel" placeholder="05xxxxxxxx - للتواصل السريع" required />
+                <input name="phone" type="tel" placeholder="رقم واتساب للتواصل السريع" required />
+                <small className="consultation-field__hint">يجب أن يكون الرقم المسجل رقم واتساب حتى يتم التواصل معك بسرعة.</small>
               </label>
               <div className="consultation-field consultation-field--wide-half consultation-field--email">
                 <label className="consultation-field__label" htmlFor="consultation-email">البريد الإلكتروني</label>
@@ -653,14 +700,24 @@ export function ServicesShowcasePage() {
 
             <div className="consultation-form__footer">
               <button className="showcase-button showcase-button--primary" type="submit" disabled={consultationStatus === "sending"}>
-                {consultationStatus === "sending" ? "جاري إرسال الطلب..." : "أرسل الطلب واحصل على توجيه مجاني"}
+                {consultationStatus === "sending" ? "جاري إرسال الطلب..." : "أرسل الطلب واحصل على توجيه متخصص"}
               </button>
-              {consultationStatus === "success" ? <p className="consultation-alert is-success">تم تسجيل طلب الاستشارة المجانية بنجاح.</p> : null}
+              {consultationStatus === "success" ? <p className="consultation-alert is-success">تم تسجيل طلب الاستشارة بنجاح.</p> : null}
+              {consultationStatus === "duplicate" ? <p className="consultation-alert is-warning">تم تسجيل البيانات من قبل.</p> : null}
+              {consultationStatus === "whatsapp-invalid" ? <p className="consultation-alert is-error">رقم الجوال غير مسجل في واتساب.</p> : null}
               {consultationStatus === "error" ? <p className="consultation-alert is-error">تعذر تسجيل الطلب، حاول مرة أخرى.</p> : null}
             </div>
+
+            {consultationStatus === "sending" ? (
+              <div className="consultation-saving-screen" role="status" aria-live="polite">
+                <span className="consultation-saving-screen__spinner" aria-hidden="true" />
+                <strong>جاري حفظ بيانات الاستشارة</strong>
+                <p>يرجى الانتظار لحظات، نقوم بتسجيل الطلب بأمان.</p>
+              </div>
+            ) : null}
           </form>
 
-            <aside className="consultation-side-benefits consultation-side-benefits--left" aria-label="فوائد إضافية للاستشارة المجانية">
+            <aside className="consultation-side-benefits consultation-side-benefits--left" aria-label="فوائد إضافية للاستشارة المتخصصة">
               {consultationBenefits.slice(2).map((benefit, index) => (
                 <article key={benefit.title}>
                   <span>{String(index + 3).padStart(2, "0")}</span>
@@ -687,6 +744,54 @@ export function ServicesShowcasePage() {
           </div>
         </div>
       </section>
+
+      {consultationStatus === "success" ? (
+        <div className="consultation-success-modal" role="dialog" aria-modal="true" aria-labelledby="consultation-success-title">
+          <div className="consultation-success-modal__panel">
+            <span className="consultation-success-modal__icon" aria-hidden="true">
+              <i className="fa-solid fa-check" />
+            </span>
+            <h3 id="consultation-success-title">تم اعتماد الاستشارة</h3>
+            <p>تم حفظ بياناتك بنجاح، وسيتم التواصل معك خلال 24 ساعة.</p>
+            <button type="button" onClick={() => setConsultationStatus("idle")}>
+              <i className="fa-solid fa-check" aria-hidden="true" />
+              تم
+            </button>
+          </div>
+        </div>
+      ) : null}
+
+      {consultationStatus === "duplicate" ? (
+        <div className="consultation-success-modal consultation-success-modal--warning" role="dialog" aria-modal="true" aria-labelledby="consultation-duplicate-title">
+          <div className="consultation-success-modal__panel">
+            <span className="consultation-success-modal__icon" aria-hidden="true">
+              <i className="fa-solid fa-circle-info" />
+            </span>
+            <h3 id="consultation-duplicate-title">تم تسجيل البيانات من قبل</h3>
+            <p>رقم الهاتف أو البريد الإلكتروني مستخدم في طلب سابق. يمكنكم تسجيل الدخول من شاشة دخول العميل، وفي حالة نسيان الرقم السري يمكن استرجاعه من نفس الشاشة.</p>
+            <button type="button" onClick={() => setConsultationStatus("idle")}>
+              <i className="fa-solid fa-pen" aria-hidden="true" />
+              تعديل البيانات
+            </button>
+          </div>
+        </div>
+      ) : null}
+
+      {consultationStatus === "whatsapp-invalid" ? (
+        <div className="consultation-success-modal consultation-success-modal--error" role="dialog" aria-modal="true" aria-labelledby="consultation-whatsapp-title">
+          <div className="consultation-success-modal__panel">
+            <span className="consultation-success-modal__icon" aria-hidden="true">
+              <i className="fa-solid fa-triangle-exclamation" />
+            </span>
+            <h3 id="consultation-whatsapp-title">رقم الجوال غير مسجل في واتساب</h3>
+            <p>يرجى إدخال رقم واتساب صحيح حتى نستطيع التواصل معك في أسرع وقت.</p>
+            <button type="button" onClick={() => setConsultationStatus("idle")}>
+              <i className="fa-solid fa-pen" aria-hidden="true" />
+              تعديل رقم الجوال
+            </button>
+          </div>
+        </div>
+      ) : null}
     </main>
   );
 }
