@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { MobileAppNavigation } from "@/components/MobileAppNavigation";
 import { categoryNames, pathSteps, services } from "@/data/services";
 
@@ -69,13 +69,40 @@ const contactWindowOptions = [
 
 const locationOptions = ["دبي", "أبوظبي", "الشارقة", "عجمان", "رأس الخيمة", "العين", "الفجيرة", "خارج الإمارات"];
 
-const emailOptions = [
-  "info@company.com",
-  "sales@company.com",
-  "projects@company.com",
-  "admin@company.com",
-  "operations@company.com",
-  "ceo@company.com"
+const footerContactLinks = [
+  {
+    label: "واتساب",
+    value: "0556260392",
+    href: "https://wa.me/971556260392",
+    icon: "fa-brands fa-whatsapp"
+  },
+  {
+    label: "رقم الجوال",
+    value: "0503646355",
+    href: "tel:0503646355",
+    icon: "fa-solid fa-mobile-screen-button"
+  },
+  {
+    label: "هاتف المكتب",
+    value: "065613114",
+    href: "tel:065613114",
+    icon: "fa-solid fa-phone-volume"
+  },
+  {
+    label: "البريد الإلكتروني",
+    value: "info@globalgreenconsults.com",
+    href: "mailto:info@globalgreenconsults.com",
+    icon: "fa-solid fa-envelope"
+  }
+];
+
+const footerSocialLinks = [
+  { label: "Instagram", href: "https://www.instagram.com/globalgreenconsults/", icon: "fa-brands fa-instagram" },
+  { label: "Facebook", href: "https://www.facebook.com/globalgreenconsults", icon: "fa-brands fa-facebook-f" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/company/globalgreenconsults", icon: "fa-brands fa-linkedin-in" },
+  { label: "X", href: "https://x.com/globalgreenconsults", icon: "fa-brands fa-x-twitter" },
+  { label: "YouTube", href: "https://www.youtube.com/@globalgreenconsults", icon: "fa-brands fa-youtube" },
+  { label: "TikTok", href: "https://www.tiktok.com/@globalgreenconsults", icon: "fa-brands fa-tiktok" }
 ];
 
 const consultationNeedOptions = [
@@ -129,14 +156,245 @@ const consultationNeedOptions = [
   }
 ];
 
-export function ServicesShowcasePage() {
+const parallelHeroSlides = [
+  {
+    title: "فكرة مشروع",
+    text: "تحويل الفكرة إلى تصور قابل للدراسة والتمويل والتنفيذ.",
+    image: "/images/img/5.png",
+    tag: "بداية"
+  },
+  {
+    title: "دراسة موقع المشروع",
+    text: "قراءة الموقع والتكلفة والاشتراطات قبل قرار الاستثمار.",
+    image: "/images/img/16.png",
+    tag: "هندسة"
+  },
+  {
+    title: "دراسة الجدوى",
+    text: "ترتيب السوق والتشغيل والملف المالي قبل بدء التنفيذ.",
+    image: "/images/img/17.png",
+    tag: "جدوى"
+  },
+  {
+    title: "مشروع صناعي",
+    text: "من اختيار النشاط إلى خطوط الإنتاج والتشغيل.",
+    image: "/images/img/15.png",
+    tag: "تنفيذ"
+  },
+  {
+    title: "مشروع تجاري",
+    text: "قراءة السوق وتقدير العائد ومراحل الانطلاق.",
+    image: "/images/img/6.png",
+    tag: "استثمار"
+  },
+  {
+    title: "تمويل المشروع",
+    text: "تجهيز الدراسة والعرض المالي واحتياج التمويل.",
+    image: "/images/img/9.png",
+    tag: "تمويل"
+  },
+  {
+    title: "استشارة هندسية",
+    text: "ربط التصميم بمتطلبات التشغيل والطاقة والتراخيص.",
+    image: "/images/img/18.png",
+    tag: "موقع"
+  },
+  {
+    title: "استشارة صناعية",
+    text: "توصيات عملية للمصنع أو المشروع القائم.",
+    image: "/images/img/13.png",
+    tag: "خبرة"
+  },
+  {
+    title: "تحويل المصنع",
+    text: "رفع الكفاءة وتقليل الهدر وتحسين الاستدامة.",
+    image: "/images/img/14.png",
+    tag: "تحول"
+  },
+  {
+    title: "تأسيس متكامل",
+    text: "دراسة، تصميم، تراخيص، تمويل، تنفيذ، وتسليم.",
+    image: "/images/all.png",
+    tag: "مسار كامل"
+  }
+];
+
+const parallelAboutStats = [
+  { value: "30+", label: "عاماً من الخبرة المحلية والدولية" },
+  { value: "3", label: "محاور رئيسية صناعية وتجارية واستثمارية" },
+  { value: "1", label: "جهة متابعة واحدة من الدراسة إلى التشغيل" }
+];
+
+const parallelAboutHighlights = [
+  {
+    title: "تحويل الفكرة إلى ملف استثماري",
+    text: "نرتب الفكرة، السوق، التكلفة، ونقاط القوة حتى تصبح قابلة للعرض والقرار."
+  },
+  {
+    title: "دراسات وتمويل وتراخيص",
+    text: "نجهز الدراسات المالية والفنية ونساعد في مسار التمويل والمتطلبات الرسمية."
+  },
+  {
+    title: "استشارات هندسية وصناعية",
+    text: "نربط احتياج المشروع بالتصميم، المعدات، التشغيل، والطاقة بصورة عملية."
+  },
+  {
+    title: "متابعة تنفيذ وتشغيل",
+    text: "ننسق بين الأطراف ونحول الخطة إلى خطوات واضحة قابلة للمتابعة والتسليم."
+  }
+];
+
+const parallelDashboardSteps = [
+  { number: "01", title: "استقبال الفكرة", text: "نحدد نوع المشروع ومرحلته وما يحتاجه قبل أي التزام كبير." },
+  { number: "02", title: "تكوين الملف", text: "نرتب دراسة الجدوى والملف المالي والمتطلبات الفنية." },
+  { number: "03", title: "ربط الأطراف", text: "ننسق بين الاستشاريين والموردين وجهات الترخيص والتمويل." },
+  { number: "04", title: "متابعة التنفيذ", text: "نحول الخطة إلى خطوات عملية قابلة للقياس والمتابعة." }
+];
+
+const parallelServiceNotes = [
+  {
+    icon: "fa-solid fa-chart-line",
+    title: "دراسات جدوى استثمارية دقيقة",
+    text: "قراءة السوق والتكلفة والعائد والمخاطر قبل قرار الاستثمار."
+  },
+  {
+    icon: "fa-solid fa-building-columns",
+    title: "دراسات مالية معتمدة",
+    text: "تجهيز ملف التمويل والعرض المالي للجهات المناسبة."
+  },
+  {
+    icon: "fa-solid fa-sitemap",
+    title: "ترتيب التخصصات",
+    text: "تحديد ما يحتاجه المشروع من هندسة وتشغيل وتراخيص وموردين."
+  },
+  {
+    icon: "fa-solid fa-helmet-safety",
+    title: "الاستشارات الهندسية",
+    text: "تصور هندسي عملي يراعي الموقع والطاقة والتوسع المستقبلي."
+  },
+  {
+    icon: "fa-solid fa-industry",
+    title: "الاستشارات الصناعية",
+    text: "حلول للمصانع والمشاريع القائمة والجديدة من التشخيص إلى التحسين."
+  },
+  {
+    icon: "fa-solid fa-recycle",
+    title: "تحويل المصنع",
+    text: "تحسين الكفاءة وتقليل الهدر ورفع جاهزية الاستدامة."
+  },
+  {
+    icon: "fa-solid fa-layer-group",
+    title: "تأسيس المشاريع",
+    text: "مسار يبدأ بالفكرة وينتهي بخطة تنفيذ وتشغيل واضحة."
+  },
+  {
+    icon: "fa-solid fa-handshake-angle",
+    title: "الاستشارات والجدوى",
+    text: "توجيه متخصص يساعد العميل على اختيار الخطوة الأنسب."
+  }
+];
+
+const consultationRequiredFields = [
+  { name: "fullName", label: "الاسم الكامل" },
+  { name: "mobilePhone", label: "رقم الجوال" },
+  { name: "phone", label: "رقم الواتساب" },
+  { name: "email", label: "البريد الإلكتروني" },
+  { name: "location", label: "المدينة / الدولة" }
+];
+
+const consultationPhoneFields = [
+  { name: "mobilePhone", label: "رقم الجوال" },
+  { name: "phone", label: "رقم الواتساب" }
+];
+
+function normalizePhoneDigits(value) {
+  return String(value ?? "")
+    .replace(/[٠-٩]/g, (digit) => String(digit.charCodeAt(0) - 1632))
+    .replace(/[۰-۹]/g, (digit) => String(digit.charCodeAt(0) - 1776));
+}
+
+function formatPhoneInputValue(value) {
+  return normalizePhoneDigits(value)
+    .replace(/[^\d+\s().-]/g, "")
+    .replace(/(?!^)\+/g, "")
+    .replace(/\s{2,}/g, " ");
+}
+
+function getPhoneValidationMessage(value, label) {
+  const phoneValue = formatPhoneInputValue(value).trim();
+  const digitCount = phoneValue.replace(/\D/g, "").length;
+
+  if (!phoneValue) return `${label} غير مسجل. يرجى تعبئة هذا الحقل بوضوح.`;
+  if (!/^\+?[\d\s().-]+$/.test(phoneValue) || digitCount < 7 || digitCount > 15) {
+    return `${label} يجب أن يكون بصيغة رقم هاتف صحيحة بدون حروف.`;
+  }
+
+  return "";
+}
+
+function ScrollChoiceRail({ children, className, label, ...props }) {
+  const railRef = useRef(null);
+  const railLabel = label ?? props["aria-label"] ?? "الخيارات";
+
+  function scrollRail(direction) {
+    const rail = railRef.current;
+
+    if (!rail) return;
+
+    const distance = Math.max(180, Math.round(rail.clientWidth * 0.72));
+    const isRtl = window.getComputedStyle(rail).direction === "rtl";
+    const left = direction === "next" ? (isRtl ? -distance : distance) : isRtl ? distance : -distance;
+
+    rail.scrollBy({ left, behavior: "smooth" });
+  }
+
+  return (
+    <div className="scroll-choice-rail">
+      <button
+        aria-label={`عرض الخيارات السابقة في ${railLabel}`}
+        className="scroll-choice-button scroll-choice-button--previous"
+        onClick={() => scrollRail("previous")}
+        type="button"
+      >
+        <i className="fa-solid fa-chevron-right" aria-hidden="true" />
+      </button>
+      <div className={className} ref={railRef} {...props}>
+        {children}
+      </div>
+      <button
+        aria-label={`عرض الخيارات التالية في ${railLabel}`}
+        className="scroll-choice-button scroll-choice-button--next"
+        onClick={() => scrollRail("next")}
+        type="button"
+      >
+        <i className="fa-solid fa-chevron-left" aria-hidden="true" />
+      </button>
+    </div>
+  );
+}
+
+export function ServicesShowcasePage({ showParallelAdditions = false } = {}) {
   const [activeServiceNeed, setActiveServiceNeed] = useState("all");
+  const [serviceSearchQuery, setServiceSearchQuery] = useState("");
+  const [serviceGridColumns, setServiceGridColumns] = useState("2");
+  const [isServiceToolsFixed, setIsServiceToolsFixed] = useState(false);
+  const [serviceToolsHeight, setServiceToolsHeight] = useState(0);
   const [consultationStatus, setConsultationStatus] = useState("idle");
   const [selectedConsultationNeed, setSelectedConsultationNeed] = useState("not-sure");
   const [selectedConsultationSlug, setSelectedConsultationSlug] = useState("recommend-service");
   const [selectedEmail, setSelectedEmail] = useState("");
   const [selectedLocation, setSelectedLocation] = useState("");
+  const [consultationValidationErrors, setConsultationValidationErrors] = useState({});
+  const [activeNavigationHref, setActiveNavigationHref] = useState("#top");
   const [showAllConsultationServices, setShowAllConsultationServices] = useState(false);
+  const [isConsultationFooterFixed, setIsConsultationFooterFixed] = useState(false);
+  const [consultationFooterWidth, setConsultationFooterWidth] = useState(0);
+  const [consultationFooterHeight, setConsultationFooterHeight] = useState(0);
+  const servicesSectionRef = useRef(null);
+  const serviceToolsRef = useRef(null);
+  const consultationSectionRef = useRef(null);
+  const consultationFormRef = useRef(null);
+  const consultationFooterRef = useRef(null);
 
   const serviceNeedFilters = useMemo(() => {
     const allServicesFilter = {
@@ -162,23 +420,161 @@ export function ServicesShowcasePage() {
       .filter(Boolean);
   }, [activeServiceNeed, serviceNeedFilters]);
 
+  const searchedServices = useMemo(() => {
+    const query = serviceSearchQuery.trim().toLowerCase();
+
+    if (!showParallelAdditions || !query) return visibleServices;
+
+    return visibleServices.filter((service) => {
+      const imageElements = serviceImageElements[service.id] ?? [];
+      const searchContent = [
+        service.title,
+        service.summary,
+        service.description,
+        service.tag,
+        categoryNames[service.category],
+        ...(service.highlights ?? []),
+        ...imageElements
+      ]
+        .join(" ")
+        .toLowerCase();
+
+      return searchContent.includes(query);
+    });
+  }, [serviceSearchQuery, showParallelAdditions, visibleServices]);
+
+  useEffect(() => {
+    if (!showParallelAdditions) return undefined;
+
+    let animationFrame = 0;
+
+    const updateServiceToolsPosition = () => {
+      window.cancelAnimationFrame(animationFrame);
+      animationFrame = window.requestAnimationFrame(() => {
+        const section = servicesSectionRef.current;
+        const tools = serviceToolsRef.current;
+
+        if (!section || !tools) return;
+
+        const showcaseRoot = section.closest(".green-showcase") ?? document.documentElement;
+        const navHeight =
+          Number.parseFloat(window.getComputedStyle(showcaseRoot).getPropertyValue("--showcase-nav-height")) || 82;
+        const topOffset = navHeight + 12;
+        const sectionRect = section.getBoundingClientRect();
+        const toolsHeight = tools.offsetHeight;
+        const shouldFix = sectionRect.top <= topOffset && sectionRect.bottom > topOffset + toolsHeight + 48;
+
+        setServiceToolsHeight(toolsHeight);
+        setIsServiceToolsFixed(shouldFix);
+      });
+    };
+
+    updateServiceToolsPosition();
+    window.addEventListener("scroll", updateServiceToolsPosition, { passive: true });
+    window.addEventListener("resize", updateServiceToolsPosition);
+
+    return () => {
+      window.cancelAnimationFrame(animationFrame);
+      window.removeEventListener("scroll", updateServiceToolsPosition);
+      window.removeEventListener("resize", updateServiceToolsPosition);
+    };
+  }, [searchedServices.length, serviceGridColumns, showParallelAdditions]);
+
+  useEffect(() => {
+    if (!showParallelAdditions || serviceGridColumns !== "3") return undefined;
+
+    const tabletColumnsQuery = window.matchMedia("(min-width: 540px) and (max-width: 1099px)");
+    const keepTabletColumnsCompact = () => {
+      if (tabletColumnsQuery.matches) setServiceGridColumns("2");
+    };
+
+    keepTabletColumnsCompact();
+    tabletColumnsQuery.addEventListener("change", keepTabletColumnsCompact);
+
+    return () => {
+      tabletColumnsQuery.removeEventListener("change", keepTabletColumnsCompact);
+    };
+  }, [serviceGridColumns, showParallelAdditions]);
+
+  useEffect(() => {
+    let animationFrame = 0;
+
+    const updateConsultationFooterPosition = () => {
+      window.cancelAnimationFrame(animationFrame);
+      animationFrame = window.requestAnimationFrame(() => {
+        const section = consultationSectionRef.current;
+        const form = consultationFormRef.current;
+        const footer = consultationFooterRef.current;
+
+        if (!section || !form || !footer) return;
+
+        const sectionRect = section.getBoundingClientRect();
+        const formRect = form.getBoundingClientRect();
+        const footerHeight = footer.offsetHeight;
+        const shouldFix =
+          sectionRect.top <= window.innerHeight * 0.58 &&
+          sectionRect.bottom >= window.innerHeight - Math.min(footerHeight, 120);
+
+        setConsultationFooterWidth(Math.round(formRect.width));
+        setConsultationFooterHeight(footerHeight);
+        setIsConsultationFooterFixed(shouldFix);
+      });
+    };
+
+    updateConsultationFooterPosition();
+    window.addEventListener("scroll", updateConsultationFooterPosition, { passive: true });
+    window.addEventListener("resize", updateConsultationFooterPosition);
+
+    return () => {
+      window.cancelAnimationFrame(animationFrame);
+      window.removeEventListener("scroll", updateConsultationFooterPosition);
+      window.removeEventListener("resize", updateConsultationFooterPosition);
+    };
+  }, [consultationStatus, consultationValidationErrors]);
+
   const featuredServices = services.filter((service) => [1, 11, 15, 18].includes(service.id));
   const heroService = services.find((service) => service.id === 15);
   const selectedNeed = consultationNeedOptions.find((option) => option.value === selectedConsultationNeed);
+  const pageMenuLinks = showParallelAdditions
+    ? [
+        { href: "#top", label: "الرئيسية", icon: "fa-solid fa-house" },
+        { href: "#about-us", label: "من نحن", icon: "fa-solid fa-building" },
+        { href: "#audiences", label: "مجالات العمل", icon: "fa-solid fa-images" },
+        { href: "#consultation", label: "استشارة", navLabel: "استشارة متخصصة", icon: "fa-solid fa-clipboard-list" },
+        { href: "#one-company", label: "شركة واحدة", icon: "fa-solid fa-sitemap" },
+        { href: "#path", label: "المنهجية", icon: "fa-solid fa-route" },
+        { href: "#services", label: "الخدمات", icon: "fa-solid fa-layer-group" },
+        { href: "#requested-services", label: "محاور الخدمة", icon: "fa-solid fa-list-check" },
+        { href: "#contact", label: "تواصل", icon: "fa-solid fa-headset" }
+      ]
+    : [
+        { href: "#top", label: "الرئيسية", icon: "fa-solid fa-house" },
+        { href: "#path", label: "المنهجية", icon: "fa-solid fa-route" },
+        { href: "#services", label: "الخدمات", icon: "fa-solid fa-layer-group" },
+        { href: "#consultation", label: "استشارة", navLabel: "استشارة متخصصة", icon: "fa-solid fa-clipboard-list" },
+        { href: "#contact", label: "تواصل", icon: "fa-solid fa-headset" }
+      ];
   const mobileMenuLinks = [
-    { href: "#top", label: "الرئيسية", icon: "fa-solid fa-house" },
-    { href: "#services", label: "الخدمات", icon: "fa-solid fa-layer-group" },
-    { href: "#path", label: "المنهجية", icon: "fa-solid fa-route" },
-    { href: "#consultation", label: "استشارة", icon: "fa-solid fa-clipboard-list" },
-    { href: "#contact", label: "تواصل", icon: "fa-solid fa-headset" },
+    ...pageMenuLinks,
     { href: "/clients/login", label: "دخول العملاء", icon: "fa-solid fa-user-lock" }
   ];
-  const mobileBottomLinks = [
-    { href: "#services", label: "الخدمات", icon: "fa-solid fa-grid-2" },
-    { href: "#consultation", label: "استشارة", icon: "fa-solid fa-clipboard-check" },
-    { href: "#contact", label: "تواصل", icon: "fa-solid fa-headset" },
-    { href: "/clients/login", label: "العملاء", icon: "fa-solid fa-user-lock" }
-  ];
+  const mobileBottomLinks = showParallelAdditions
+    ? [
+        { href: "#top", label: "الرئيسية", icon: "fa-solid fa-house" },
+        { href: "#consultation", label: "استشارة", icon: "fa-solid fa-clipboard-check" },
+        { href: "#services", label: "الخدمات", icon: "fa-solid fa-grid-2" },
+        { href: "#contact", label: "تواصل", icon: "fa-solid fa-headset" }
+      ]
+    : [
+        { href: "#top", label: "الرئيسية", icon: "fa-solid fa-house" },
+        { href: "#path", label: "المنهجية", icon: "fa-solid fa-route" },
+        { href: "#services", label: "الخدمات", icon: "fa-solid fa-grid-2" },
+        { href: "#consultation", label: "استشارة", icon: "fa-solid fa-clipboard-check" },
+        { href: "#contact", label: "تواصل", icon: "fa-solid fa-headset" }
+      ];
+  const sectionNavigationHrefs = pageMenuLinks.map((link) => link.href).filter((href) => href.startsWith("#"));
+  const sectionNavigationKey = sectionNavigationHrefs.join("|");
+  const duplicatedParallelSlides = [...parallelHeroSlides, ...parallelHeroSlides];
   const consultationServiceChoices = useMemo(() => {
     if (showAllConsultationServices) return services;
 
@@ -187,13 +583,100 @@ export function ServicesShowcasePage() {
       .filter(Boolean);
   }, [selectedNeed, showAllConsultationServices]);
 
+  useEffect(() => {
+    let animationFrame = 0;
+
+    const updateActiveNavigation = () => {
+      window.cancelAnimationFrame(animationFrame);
+      animationFrame = window.requestAnimationFrame(() => {
+        const sections = sectionNavigationHrefs
+          .map((href) => ({ href, element: document.getElementById(href.slice(1)) }))
+          .filter((section) => section.element);
+
+        if (sections.length === 0) return;
+
+        const showcaseRoot = document.querySelector(".green-showcase") ?? document.documentElement;
+        const navHeight =
+          Number.parseFloat(window.getComputedStyle(showcaseRoot).getPropertyValue("--showcase-nav-height")) || 82;
+        const activationLine = navHeight + Math.min(220, window.innerHeight * 0.32);
+        let nextActiveHref = sections[0].href;
+
+        sections.forEach((section) => {
+          if (section.element.getBoundingClientRect().top <= activationLine) {
+            nextActiveHref = section.href;
+          }
+        });
+
+        const documentHeight = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
+
+        if (window.scrollY + window.innerHeight >= documentHeight - 6) {
+          nextActiveHref = sections[sections.length - 1].href;
+        }
+
+        setActiveNavigationHref((currentHref) => (currentHref === nextActiveHref ? currentHref : nextActiveHref));
+      });
+    };
+
+    updateActiveNavigation();
+    window.addEventListener("scroll", updateActiveNavigation, { passive: true });
+    window.addEventListener("resize", updateActiveNavigation);
+    window.addEventListener("hashchange", updateActiveNavigation);
+
+    return () => {
+      window.cancelAnimationFrame(animationFrame);
+      window.removeEventListener("scroll", updateActiveNavigation);
+      window.removeEventListener("resize", updateActiveNavigation);
+      window.removeEventListener("hashchange", updateActiveNavigation);
+    };
+  }, [sectionNavigationKey]);
+
   async function handleConsultationSubmit(event) {
     event.preventDefault();
-    setConsultationStatus("sending");
 
     const form = event.currentTarget;
     const formData = new FormData(form);
     const payload = Object.fromEntries(formData.entries());
+
+    consultationPhoneFields.forEach((field) => {
+      payload[field.name] = formatPhoneInputValue(payload[field.name]).trim();
+    });
+
+    const nextValidationErrors = consultationRequiredFields.reduce((errors, field) => {
+      if (!String(payload[field.name] ?? "").trim()) {
+        errors[field.name] = `${field.label} غير مسجل. يرجى تعبئة هذا الحقل بوضوح.`;
+      }
+
+      return errors;
+    }, {});
+    const emailValue = String(payload.email ?? "").trim();
+
+    consultationPhoneFields.forEach((field) => {
+      const phoneValidationMessage = getPhoneValidationMessage(payload[field.name], field.label);
+
+      if (phoneValidationMessage) nextValidationErrors[field.name] = phoneValidationMessage;
+    });
+
+    if (emailValue && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue)) {
+      nextValidationErrors.email = "البريد الإلكتروني غير صحيح. يرجى كتابته بصيغة واضحة.";
+    }
+
+    if (Object.keys(nextValidationErrors).length > 0) {
+      setConsultationValidationErrors(nextValidationErrors);
+      setConsultationStatus("validation-error");
+
+      const firstInvalidField = consultationRequiredFields.find((field) => nextValidationErrors[field.name]);
+      const firstInvalidElement = firstInvalidField ? form.elements.namedItem(firstInvalidField.name) : null;
+
+      if (firstInvalidElement instanceof HTMLElement) {
+        firstInvalidElement.focus({ preventScroll: true });
+        firstInvalidElement.closest(".consultation-field")?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+
+      return;
+    }
+
+    setConsultationValidationErrors({});
+    setConsultationStatus("sending");
 
     try {
       const response = await fetch("/api/consultations", {
@@ -241,6 +724,28 @@ export function ServicesShowcasePage() {
     setConsultationStatus("idle");
   }
 
+  function handleConsultationFormInput(event) {
+    const fieldName = event.target?.name;
+
+    if (!fieldName) return;
+
+    setConsultationValidationErrors((currentErrors) => {
+      if (!currentErrors[fieldName]) return currentErrors;
+
+      const nextErrors = { ...currentErrors };
+      delete nextErrors[fieldName];
+      return nextErrors;
+    });
+  }
+
+  function handlePhoneFieldInput(event) {
+    const nextValue = formatPhoneInputValue(event.currentTarget.value);
+
+    if (event.currentTarget.value !== nextValue) {
+      event.currentTarget.value = nextValue;
+    }
+  }
+
   function handleConsultationNeedChange(needValue) {
     const nextNeed = consultationNeedOptions.find((option) => option.value === needValue);
     const firstService = nextNeed?.serviceIds?.[0]
@@ -252,8 +757,88 @@ export function ServicesShowcasePage() {
     setSelectedConsultationSlug(firstService?.slug ?? "recommend-service");
   }
 
+  function handleInstantAnchorNavigation(event) {
+    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+      return;
+    }
+
+    const anchor = event.target.closest?.('a[href^="#"]');
+    const href = anchor?.getAttribute("href");
+
+    if (!href || href === "#") return;
+
+    const target = document.getElementById(href.slice(1));
+
+    if (!target) return;
+
+    event.preventDefault();
+
+    const showcaseRoot = target.closest(".green-showcase") ?? document.documentElement;
+    const navHeight =
+      Number.parseFloat(window.getComputedStyle(showcaseRoot).getPropertyValue("--showcase-nav-height")) || 82;
+    const topOffset = target.id === "top" ? 0 : Math.max(0, window.scrollY + target.getBoundingClientRect().top - navHeight - 12);
+    const htmlScrollBehavior = document.documentElement.style.scrollBehavior;
+    const bodyScrollBehavior = document.body.style.scrollBehavior;
+
+    document.documentElement.style.scrollBehavior = "auto";
+    document.body.style.scrollBehavior = "auto";
+    document.documentElement.scrollTop = topOffset;
+    document.body.scrollTop = topOffset;
+    window.scrollTo({ left: 0, top: topOffset, behavior: "auto" });
+    window.history.pushState(null, "", href);
+    setActiveNavigationHref(href);
+    window.requestAnimationFrame(() => {
+      document.documentElement.style.scrollBehavior = htmlScrollBehavior;
+      document.body.style.scrollBehavior = bodyScrollBehavior;
+    });
+  }
+
+  const parallelAboutSection = showParallelAdditions ? (
+    <section className="parallel-section parallel-about" id="about-us" aria-labelledby="parallel-about-title">
+      <div className="showcase-container parallel-about__grid">
+        <div className="section-heading parallel-about__content">
+          <span className="parallel-about__label">من نحن</span>
+          <h2 id="parallel-about-title">مجموعة استشارية تساعد المستثمر على بناء مشروع واضح وقابل للتنفيذ.</h2>
+          <p>
+            نعمل مع المستثمرين وملاك المشاريع لتحويل الأفكار إلى ملفات استثمارية متكاملة تشمل
+            دراسة الجدوى، التمويل، التراخيص، الاستشارات الهندسية والصناعية، وخطة التشغيل.
+          </p>
+          <p>
+            دورنا هو تنسيق الصورة كاملة: قراءة الفرصة، تحديد المتطلبات، ترتيب المختصين،
+            ومتابعة المسار حتى يصبح المشروع جاهزاً للقرار والتنفيذ.
+          </p>
+
+          <div className="parallel-about__stats" aria-label="أرقام مختصرة عن المجموعة">
+            {parallelAboutStats.map((stat) => (
+              <article key={stat.label}>
+                <strong>{stat.value}</strong>
+                <span>{stat.label}</span>
+              </article>
+            ))}
+          </div>
+        </div>
+
+        <div className="parallel-note-stack" aria-label="محاور عمل المجموعة">
+          {parallelAboutHighlights.map((item, index) => (
+            <article key={item.title}>
+              <span>{String(index + 1).padStart(2, "0")}</span>
+              <div>
+                <h3>{item.title}</h3>
+                <p>{item.text}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  ) : null;
+
   return (
-    <main className="green-showcase" dir="rtl">
+    <main
+      className={`green-showcase${showParallelAdditions ? " parallel-showcase green-showcase--parallel" : ""}`}
+      dir="rtl"
+      onClick={handleInstantAnchorNavigation}
+    >
       <header className="showcase-nav">
         <Link className="showcase-brand" href="/" aria-label="الشركة الدولية لخبراء التطوير الصناعي والاستشارات الخضراء">
           <img src="/images/logo.jpeg" alt="" />
@@ -263,32 +848,46 @@ export function ServicesShowcasePage() {
           </span>
         </Link>
         <nav className="showcase-links" aria-label="روابط الصفحة">
-          <a href="#top">الرئيسية</a>
-          <a href="#services">الخدمات</a>
-          <a href="#path">المنهجية</a>
-          <a href="#consultation">استشارة متخصصة</a>
-          <a href="#contact">تواصل</a>
+          {pageMenuLinks.map((link) => (
+            <a
+              aria-current={activeNavigationHref === link.href ? "location" : undefined}
+              className={activeNavigationHref === link.href ? "is-active" : undefined}
+              href={link.href}
+              key={link.href}
+            >
+              {link.navLabel ?? link.label}
+            </a>
+          ))}
         </nav>
         <div className="showcase-nav-actions">
-          <Link className="showcase-client-login" href="/clients/login" aria-label="دخول العملاء" title="دخول العملاء">
-            <i className="fa-solid fa-user-lock" aria-hidden="true" />
-            <span>دخول العملاء</span>
-          </Link>
-          <a className="showcase-nav-cta" href="tel:0556260392">
-            <i className="fa-solid fa-phone" aria-hidden="true" />
-            <span>اتصل الآن</span>
+          {!showParallelAdditions ? (
+            <Link className="showcase-client-login" href="/clients/login" aria-label="دخول العملاء" title="دخول العملاء">
+              <i className="fa-solid fa-user-lock" aria-hidden="true" />
+              <span>دخول العملاء</span>
+            </Link>
+          ) : null}
+          <a className="showcase-nav-cta" href={showParallelAdditions ? "#consultation" : "tel:0556260392"}>
+            <i className={showParallelAdditions ? "fa-solid fa-clipboard-check" : "fa-solid fa-phone"} aria-hidden="true" />
+            <span>{showParallelAdditions ? "اطلب استشارة" : "اتصل الآن"}</span>
           </a>
         </div>
         <MobileAppNavigation
           title="خبراء التطوير الصناعي"
-          subtitle="تنقل سريع كواجهة تطبيق"
+          subtitle={showParallelAdditions ? "استشارات وتمويل وتنفيذ المشاريع" : "تنقل سريع كواجهة تطبيق"}
+          activeHref={activeNavigationHref}
           links={mobileMenuLinks}
+          onNavigate={handleInstantAnchorNavigation}
         />
       </header>
 
       <nav className="mobile-app-bottom-nav" dir="rtl" aria-label="تنقل سريع">
         {mobileBottomLinks.map((link) => (
-          <a href={link.href} key={`${link.href}-${link.label}`}>
+          <a
+            aria-current={activeNavigationHref === link.href ? "location" : undefined}
+            className={activeNavigationHref === link.href ? "is-active" : undefined}
+            href={link.href}
+            key={`${link.href}-${link.label}`}
+          >
             <i className={link.icon} aria-hidden="true" />
             <span>{link.label}</span>
           </a>
@@ -306,8 +905,8 @@ export function ServicesShowcasePage() {
               الخبرة الصناعية والاستدامة العملية.
             </p>
             <div className="showcase-actions">
-              <a className="showcase-button showcase-button--primary" href="#services">
-                استعرض الخدمات
+              <a className="showcase-button showcase-button--primary" href={showParallelAdditions ? "#consultation" : "#services"}>
+                {showParallelAdditions ? "اطلب استشارة" : "استعرض الخدمات"}
                 <span aria-hidden="true">↓</span>
               </a>
               <a className="showcase-button showcase-button--ghost" href="mailto:info@globalgreenconsults.com">
@@ -351,15 +950,17 @@ export function ServicesShowcasePage() {
         </div>
       </section>
 
+      {parallelAboutSection}
+
       <section className="showcase-proof" aria-label="ملخص الخدمات">
         <div className="showcase-container showcase-proof__grid">
           <div>
             <strong>18</strong>
-            <span>صفحة خدمة مستقلة</span>
+            <span>{showParallelAdditions ? "خدمة متخصصة" : "صفحة خدمة مستقلة"}</span>
           </div>
           <div>
             <strong>7</strong>
-            <span>تصنيفات حسب الاحتياج</span>
+            <span>{showParallelAdditions ? "مجالات احتياج" : "تصنيفات حسب الاحتياج"}</span>
           </div>
           <div>
             <strong>360°</strong>
@@ -371,6 +972,95 @@ export function ServicesShowcasePage() {
           </div>
         </div>
       </section>
+
+      {showParallelAdditions ? (
+        <>
+          <section className="parallel-section parallel-command parallel-audiences" id="audiences" aria-labelledby="parallel-audiences-title">
+            <div className="showcase-container parallel-command__grid">
+              <div className="parallel-command__copy">
+                <span className="showcase-kicker">استعراض خدمات الشركة</span>
+                <h2 id="parallel-audiences-title">خدمات أعمال واستثمار تقود مشروعك من القرار إلى التنفيذ.</h2>
+                <p>
+                  نرتب خدمات الشركة حسب احتياج المستثمر ومالك المشروع: دراسة جدوى، تمويل، تراخيص،
+                  استشارات هندسية وصناعية، توريد وتشغيل. كل خدمة تساعدك على اتخاذ قرار عملي
+                  وتحويل الفكرة إلى ملف مشروع قابل للتنفيذ.
+                </p>
+                <div className="parallel-showcase-metrics" aria-label="ملخص استعراض خدمات الشركة">
+                  <article>
+                    <i className="fa-solid fa-layer-group" aria-hidden="true" />
+                    <strong>18</strong>
+                    <span>خدمة متخصصة</span>
+                  </article>
+                  <article>
+                    <i className="fa-solid fa-route" aria-hidden="true" />
+                    <strong>7</strong>
+                    <span>مسارات احتياج</span>
+                  </article>
+                  <article>
+                    <i className="fa-solid fa-compass-drafting" aria-hidden="true" />
+                    <strong>360°</strong>
+                    <span>من التشخيص للتشغيل</span>
+                  </article>
+                </div>
+                <div className="parallel-showcase-actions">
+                  <a href="#consultation">ابدأ بتحديد المسار</a>
+                  <a href="#services">عرض كل الخدمات</a>
+                </div>
+              </div>
+
+              <div className="parallel-slider" aria-label="مجالات المشاريع والخدمات">
+                <div className="parallel-slider__head">
+                  <span>عرض مباشر</span>
+                  <strong>نماذج من خدمات الشركة</strong>
+                </div>
+                <div className="parallel-slide-viewport">
+                  <div className="parallel-slide-track">
+                    {duplicatedParallelSlides.map((slide, index) => (
+                      <article
+                        className="parallel-slide-card"
+                        key={`${slide.title}-${index}`}
+                        aria-hidden={index >= parallelHeroSlides.length}
+                      >
+                        <img src={slide.image} alt="" />
+                        <div>
+                          <span>{slide.tag}</span>
+                          <h2>{slide.title}</h2>
+                          <p>{slide.text}</p>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="parallel-section parallel-command" id="one-company" aria-labelledby="parallel-one-company-title">
+            <div className="showcase-container parallel-command__grid">
+              <div className="parallel-command__copy">
+                <span className="showcase-kicker">شركة واحدة تدير المسار</span>
+                <h2 id="parallel-one-company-title">بدل تعدد الموردين، يكون التعامل من خلال مسار منظم واحد.</h2>
+                <p>
+                  نربط بين الاستشاري، الجهة المالية، المورد، الجهة الحكومية، وفريق التنفيذ ضمن خطة متابعة
+                  واضحة تقلل التشتت وتدعم اتخاذ القرار.
+                </p>
+              </div>
+
+              <div className="parallel-command__steps">
+                {parallelDashboardSteps.map((step) => (
+                  <article key={step.number}>
+                    <span>{step.number}</span>
+                    <div>
+                      <h3>{step.title}</h3>
+                      <p>{step.text}</p>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </section>
+        </>
+      ) : null}
 
       <section className="showcase-path" id="path" aria-labelledby="path-title">
         <div className="showcase-container">
@@ -401,17 +1091,17 @@ export function ServicesShowcasePage() {
         </div>
       </section>
 
-      <section className="service-gallery" id="services" aria-labelledby="services-title">
+      <section className="service-gallery" id="services" aria-labelledby="services-title" ref={showParallelAdditions ? servicesSectionRef : undefined}>
         <div className="showcase-container">
           <div className="section-heading section-heading--split">
             <div>
-              <span>كتالوج الخدمات</span>
+              <span>خدماتنا المتخصصة</span>
               <h2 id="services-title">حلول متخصصة تدعم قرارك الاستثماري من البداية.</h2>
             </div>
-            <p>اختر نفس تصنيف الاحتياج الموجود في نموذج الاستشارة، وستظهر لك الخدمات المسجلة المناسبة لهذا المسار مباشرة.</p>
+            <p>اختر مجال الاحتياج الأقرب لمشروعك، وستظهر لك الخدمات المناسبة لهذا المسار بشكل مباشر.</p>
           </div>
 
-          <div className="service-filters service-filters--needs" role="tablist" aria-label="تصنيف الخدمات حسب الاحتياج">
+          <ScrollChoiceRail className="service-filters service-filters--needs" role="tablist" aria-label="تصنيف الخدمات حسب الاحتياج">
             {serviceNeedFilters.map((filter) => (
               <button
                 aria-selected={activeServiceNeed === filter.value}
@@ -426,11 +1116,64 @@ export function ServicesShowcasePage() {
                 <strong>{filter.serviceIds.length}</strong>
               </button>
             ))}
-          </div>
+          </ScrollChoiceRail>
 
-          <div className="service-grid">
-            {visibleServices.map((service) => {
-              const imageElements = serviceImageElements[service.id] ?? service.highlights;
+          {showParallelAdditions ? (
+            <div
+              className={`service-gallery-tools-shell${isServiceToolsFixed ? " is-fixed" : ""}`}
+              style={{ "--service-tools-height": `${serviceToolsHeight}px` }}
+            >
+              <div className="service-gallery-tools" ref={serviceToolsRef}>
+                <label className="service-search">
+                  <span>بحث الخدمات</span>
+                  <i className="fa-solid fa-magnifying-glass" aria-hidden="true" />
+                  <input
+                    onChange={(event) => setServiceSearchQuery(event.target.value)}
+                    placeholder="ابحث باسم الخدمة أو وصفها"
+                    type="search"
+                    value={serviceSearchQuery}
+                  />
+                  {serviceSearchQuery ? (
+                    <button
+                      aria-label="مسح البحث"
+                      className="service-search__clear"
+                      onClick={() => setServiceSearchQuery("")}
+                      type="button"
+                    >
+                      <i className="fa-solid fa-xmark" aria-hidden="true" />
+                    </button>
+                  ) : null}
+                </label>
+
+                <div className="service-layout-toggle" aria-label="طريقة عرض الخدمات">
+                  {[
+                    { value: "1", label: "عرض عمود واحد", icon: "fa-solid fa-table-list" },
+                    { value: "2", label: "عرض عمودين", icon: "fa-solid fa-table-cells-large" },
+                    { value: "3", label: "عرض ثلاثة أعمدة", icon: "fa-solid fa-grip" }
+                  ].map((option) => (
+                    <button
+                      aria-label={option.label}
+                      aria-pressed={serviceGridColumns === option.value}
+                      className={serviceGridColumns === option.value ? "is-active" : ""}
+                      key={option.value}
+                      onClick={() => setServiceGridColumns(option.value)}
+                      title={option.label}
+                      type="button"
+                    >
+                      <i className={option.icon} aria-hidden="true" />
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ) : null}
+
+          <div className={`service-grid${showParallelAdditions ? ` service-grid--columns-${serviceGridColumns}` : ""}`}>
+            {searchedServices.map((service) => {
+              const imageElements =
+                showParallelAdditions && service.id === 7
+                  ? ["حصر المتطلبات الحكومية", "تجهيز الملفات والنماذج", "متابعة التصاريح خطوة بخطوة", "استكمال المتطلبات حتى الاعتماد"]
+                  : serviceImageElements[service.id] ?? service.highlights;
 
               return (
               <article className="service-tile service-product-card" data-service-id={service.id} key={service.id}>
@@ -478,10 +1221,41 @@ export function ServicesShowcasePage() {
               );
             })}
           </div>
+          {showParallelAdditions && searchedServices.length === 0 ? (
+            <p className="service-search-empty">لا توجد خدمات مطابقة للبحث الحالي.</p>
+          ) : null}
         </div>
       </section>
 
-      <section className="consultation-section" id="consultation" aria-labelledby="consultation-title">
+      {showParallelAdditions ? (
+        <>
+          <section className="parallel-section parallel-services" id="requested-services" aria-labelledby="parallel-services-title">
+            <div className="showcase-container">
+              <div className="parallel-section__head section-heading">
+                <span>محاور الخدمة</span>
+                <h2 id="parallel-services-title">من الجدوى والتمويل إلى التأسيس والتحويل الصناعي.</h2>
+                <p>
+                  نوفر محاور عمل مترابطة تساعد المستثمر ومالك المشروع على الانتقال من الفكرة إلى ملف جاهز
+                  للتنفيذ والمتابعة.
+                </p>
+              </div>
+
+              <div className="parallel-service-grid">
+                {parallelServiceNotes.map((service) => (
+                  <article className="parallel-service-card" key={service.title}>
+                    <i className={service.icon} aria-hidden="true" />
+                    <h3>{service.title}</h3>
+                    <p>{service.text}</p>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </section>
+
+        </>
+      ) : null}
+
+      <section className="consultation-section" id="consultation" aria-labelledby="consultation-title" ref={consultationSectionRef}>
         <div className="showcase-container consultation-shell">
           <div className="consultation-intro">
             <span className="showcase-kicker">استشارة متخصصة لمشروعك</span>
@@ -506,7 +1280,10 @@ export function ServicesShowcasePage() {
             aria-busy={consultationStatus === "sending"}
             className={`consultation-form${consultationStatus === "sending" ? " consultation-form--saving" : ""}`}
             id="consultation-form"
+            noValidate
+            onInput={handleConsultationFormInput}
             onSubmit={handleConsultationSubmit}
+            ref={consultationFormRef}
           >
             <div className="consultation-form__header">
               <span>استشارة متخصصة</span>
@@ -531,18 +1308,66 @@ export function ServicesShowcasePage() {
             </div>
 
             <div className="consultation-form__grid">
-              <label className="consultation-field consultation-field--wide-half">
+              <label className={`consultation-field consultation-field--wide-half${consultationValidationErrors.fullName ? " is-invalid" : ""}`}>
                 الاسم الكامل
-                <input name="fullName" type="text" placeholder="اكتب اسمك لنتواصل معك" required />
+                <input
+                  aria-describedby={consultationValidationErrors.fullName ? "consultation-fullName-error" : undefined}
+                  aria-invalid={Boolean(consultationValidationErrors.fullName)}
+                  name="fullName"
+                  type="text"
+                  placeholder="اكتب اسمك لنتواصل معك"
+                  required
+                />
+                {consultationValidationErrors.fullName ? (
+                  <small className="consultation-field__error" id="consultation-fullName-error">
+                    {consultationValidationErrors.fullName}
+                  </small>
+                ) : null}
               </label>
-              <label className="consultation-field consultation-field--wide-half">
+              <label className={`consultation-field consultation-field--wide-half${consultationValidationErrors.mobilePhone ? " is-invalid" : ""}`}>
                 رقم الجوال
-                <input name="phone" type="tel" placeholder="رقم واتساب للتواصل السريع" required />
-                <small className="consultation-field__hint">يجب أن يكون الرقم المسجل رقم واتساب حتى يتم التواصل معك بسرعة.</small>
+                <input
+                  aria-describedby={consultationValidationErrors.mobilePhone ? "consultation-mobilePhone-error" : undefined}
+                  aria-invalid={Boolean(consultationValidationErrors.mobilePhone)}
+                  inputMode="tel"
+                  name="mobilePhone"
+                  onInput={handlePhoneFieldInput}
+                  pattern="[0-9+\\s().-]*"
+                  type="tel"
+                  placeholder="رقم الجوال"
+                  required
+                />
+                {consultationValidationErrors.mobilePhone ? (
+                  <small className="consultation-field__error" id="consultation-mobilePhone-error">
+                    {consultationValidationErrors.mobilePhone}
+                  </small>
+                ) : null}
               </label>
-              <div className="consultation-field consultation-field--wide-half consultation-field--email">
+              <label className={`consultation-field consultation-field--wide-half${consultationValidationErrors.phone ? " is-invalid" : ""}`}>
+                رقم الواتساب
+                <input
+                  aria-describedby={consultationValidationErrors.phone ? "consultation-phone-error consultation-phone-hint" : "consultation-phone-hint"}
+                  aria-invalid={Boolean(consultationValidationErrors.phone)}
+                  inputMode="tel"
+                  name="phone"
+                  onInput={handlePhoneFieldInput}
+                  pattern="[0-9+\\s().-]*"
+                  type="tel"
+                  placeholder="رقم الواتساب"
+                  required
+                />
+                {consultationValidationErrors.phone ? (
+                  <small className="consultation-field__error" id="consultation-phone-error">
+                    {consultationValidationErrors.phone}
+                  </small>
+                ) : null}
+                <small className="consultation-field__hint" id="consultation-phone-hint">يجب أن يكون هذا الرقم مسجلاً في واتساب.</small>
+              </label>
+              <div className={`consultation-field consultation-field--wide-half consultation-field--email${consultationValidationErrors.email ? " is-invalid" : ""}`}>
                 <label className="consultation-field__label" htmlFor="consultation-email">البريد الإلكتروني</label>
                 <input
+                  aria-describedby={consultationValidationErrors.email ? "consultation-email-error" : undefined}
+                  aria-invalid={Boolean(consultationValidationErrors.email)}
                   id="consultation-email"
                   name="email"
                   onChange={(event) => setSelectedEmail(event.target.value)}
@@ -550,22 +1375,17 @@ export function ServicesShowcasePage() {
                   type="email"
                   value={selectedEmail}
                 />
-                <div className="consultation-email-suggestions" aria-label="اقتراحات البريد الإلكتروني">
-                  {emailOptions.map((email) => (
-                    <button
-                      className={selectedEmail === email ? "is-active" : ""}
-                      key={email}
-                      onClick={() => setSelectedEmail(email)}
-                      type="button"
-                    >
-                      {email}
-                    </button>
-                  ))}
-                </div>
+                {consultationValidationErrors.email ? (
+                  <small className="consultation-field__error" id="consultation-email-error">
+                    {consultationValidationErrors.email}
+                  </small>
+                ) : null}
               </div>
-              <div className="consultation-field consultation-field--wide-half consultation-field--location">
+              <div className={`consultation-field consultation-field--wide-half consultation-field--location${consultationValidationErrors.location ? " is-invalid" : ""}`}>
                 <label className="consultation-field__label" htmlFor="consultation-location">المدينة / الدولة</label>
                 <input
+                  aria-describedby={consultationValidationErrors.location ? "consultation-location-error" : undefined}
+                  aria-invalid={Boolean(consultationValidationErrors.location)}
                   id="consultation-location"
                   name="location"
                   onChange={(event) => setSelectedLocation(event.target.value)}
@@ -573,18 +1393,32 @@ export function ServicesShowcasePage() {
                   type="text"
                   value={selectedLocation}
                 />
-                <div className="consultation-location-suggestions" aria-label="اقتراحات المدينة">
+                {consultationValidationErrors.location ? (
+                  <small className="consultation-field__error" id="consultation-location-error">
+                    {consultationValidationErrors.location}
+                  </small>
+                ) : null}
+                <ScrollChoiceRail className="consultation-location-suggestions" aria-label="اقتراحات المدينة">
                   {locationOptions.map((location) => (
                     <button
                       className={selectedLocation === location ? "is-active" : ""}
                       key={location}
-                      onClick={() => setSelectedLocation(location)}
+                      onClick={() => {
+                        setSelectedLocation(location);
+                        setConsultationValidationErrors((currentErrors) => {
+                          if (!currentErrors.location) return currentErrors;
+
+                          const nextErrors = { ...currentErrors };
+                          delete nextErrors.location;
+                          return nextErrors;
+                        });
+                      }}
                       type="button"
                     >
                       {location}
                     </button>
                   ))}
-                </div>
+                </ScrollChoiceRail>
               </div>
 
               <fieldset className="consultation-choice-group consultation-form__wide">
@@ -602,7 +1436,7 @@ export function ServicesShowcasePage() {
 
               <fieldset className="consultation-choice-group consultation-form__wide consultation-need-picker">
                 <legend>ما الذي تحتاجه الآن؟</legend>
-                <div className="consultation-choice-grid consultation-choice-grid--needs">
+                <ScrollChoiceRail className="consultation-choice-grid consultation-choice-grid--needs" aria-label="اختيارات الاحتياج">
                   {consultationNeedOptions.map((option) => (
                     <label className="consultation-choice-card consultation-choice-card--need" key={option.value}>
                       <input
@@ -616,7 +1450,7 @@ export function ServicesShowcasePage() {
                       <small>{option.note}</small>
                     </label>
                   ))}
-                </div>
+                </ScrollChoiceRail>
               </fieldset>
 
               <fieldset className="consultation-choice-group consultation-form__wide consultation-service-picker">
@@ -639,7 +1473,7 @@ export function ServicesShowcasePage() {
                     {showAllConsultationServices ? "الرجوع للاقتراحات" : `عرض كل الخدمات (${services.length})`}
                   </button>
                 </div>
-                <div className="consultation-choice-grid consultation-choice-grid--services">
+                <ScrollChoiceRail className="consultation-choice-grid consultation-choice-grid--services" aria-label="اختيارات الخدمات">
                   <label className="consultation-choice-card consultation-choice-card--service consultation-choice-card--recommend">
                     <input
                       checked={selectedConsultationSlug === "recommend-service"}
@@ -664,7 +1498,7 @@ export function ServicesShowcasePage() {
                       <small>{service.tag}</small>
                     </label>
                   ))}
-                </div>
+                </ScrollChoiceRail>
               </fieldset>
 
               <fieldset className="consultation-choice-group consultation-form__wide">
@@ -698,14 +1532,22 @@ export function ServicesShowcasePage() {
               </label>
             </div>
 
-            <div className="consultation-form__footer">
-              <button className="showcase-button showcase-button--primary" type="submit" disabled={consultationStatus === "sending"}>
-                {consultationStatus === "sending" ? "جاري إرسال الطلب..." : "أرسل الطلب واحصل على توجيه متخصص"}
-              </button>
-              {consultationStatus === "success" ? <p className="consultation-alert is-success">تم تسجيل طلب الاستشارة بنجاح.</p> : null}
-              {consultationStatus === "duplicate" ? <p className="consultation-alert is-warning">تم تسجيل البيانات من قبل.</p> : null}
-              {consultationStatus === "whatsapp-invalid" ? <p className="consultation-alert is-error">رقم الجوال غير مسجل في واتساب.</p> : null}
-              {consultationStatus === "error" ? <p className="consultation-alert is-error">تعذر تسجيل الطلب، حاول مرة أخرى.</p> : null}
+            <div
+              className={`consultation-form__footer-shell${isConsultationFooterFixed ? " is-fixed" : ""}`}
+              style={{
+                "--consultation-footer-height": `${consultationFooterHeight}px`,
+                "--consultation-footer-width": `${consultationFooterWidth}px`
+              }}
+            >
+              <div className="consultation-form__footer" ref={consultationFooterRef}>
+                <button className="showcase-button showcase-button--primary" type="submit" disabled={consultationStatus === "sending"}>
+                  {consultationStatus === "sending" ? "جاري إرسال الطلب..." : "أرسل الطلب واحصل على توجيه متخصص"}
+                </button>
+                {consultationStatus === "success" ? <p className="consultation-alert is-success">تم تسجيل طلب الاستشارة بنجاح.</p> : null}
+                {consultationStatus === "duplicate" ? <p className="consultation-alert is-warning">تم تسجيل البيانات من قبل.</p> : null}
+                {consultationStatus === "whatsapp-invalid" ? <p className="consultation-alert is-error">رقم الواتساب غير مسجل في واتساب.</p> : null}
+                {consultationStatus === "error" ? <p className="consultation-alert is-error">تعذر تسجيل الطلب، حاول مرة أخرى.</p> : null}
+              </div>
             </div>
 
             {consultationStatus === "sending" ? (
@@ -717,7 +1559,7 @@ export function ServicesShowcasePage() {
             ) : null}
           </form>
 
-            <aside className="consultation-side-benefits consultation-side-benefits--left" aria-label="فوائد إضافية للاستشارة المتخصصة">
+            <aside className="consultation-side-benefits consultation-side-benefits--left" aria-label="فوائد الاستشارة المتخصصة">
               {consultationBenefits.slice(2).map((benefit, index) => (
                 <article key={benefit.title}>
                   <span>{String(index + 3).padStart(2, "0")}</span>
@@ -732,15 +1574,57 @@ export function ServicesShowcasePage() {
 
       <section className="showcase-contact" id="contact" aria-labelledby="contact-title">
         <div className="showcase-container showcase-contact__inner">
-          <div>
-            <span>جاهزون للعرض النهائي</span>
-            <h2 id="contact-title">ابدأ بخطوة واضحة نحو مشروع صناعي أقوى وأكثر استدامة.</h2>
+          <div className="showcase-contact__content">
+            <span>روابط التواصل</span>
+            <h2 id="contact-title">تواصل معنا بالطريقة الأنسب، وسنساعدك في تحديد الخطوة التالية لمشروعك.</h2>
+            <p>
+              أرقام مباشرة، واتساب، بريد إلكتروني، وروابط التواصل الاجتماعي في مكان واحد لسهولة المتابعة.
+            </p>
+
+            <div className="contact-link-grid" aria-label="أرقام ووسائل التواصل">
+              {footerContactLinks.map((item) => (
+                <a className="contact-link-card" href={item.href} key={item.label}>
+                  <i className={item.icon} aria-hidden="true" />
+                  <span>
+                    <small>{item.label}</small>
+                    <strong>{item.value}</strong>
+                  </span>
+                </a>
+              ))}
+            </div>
+
+            <div className="contact-social-block" aria-label="روابط التواصل الاجتماعي">
+              <strong>تابعنا على منصات التواصل</strong>
+              <div className="contact-social-links">
+                {footerSocialLinks.map((item) => (
+                  <a href={item.href} key={item.label} target="_blank" rel="noreferrer" aria-label={item.label} title={item.label}>
+                    <i className={item.icon} aria-hidden="true" />
+                  </a>
+                ))}
+              </div>
+            </div>
           </div>
-          <div className="contact-actions">
-            <a className="showcase-button showcase-button--primary" href="tel:0556260392">0556260392</a>
-            <a className="showcase-button showcase-button--light" href="mailto:info@globalgreenconsults.com">
-              info@globalgreenconsults.com
-            </a>
+
+          <div className="contact-map-card">
+            <div className="contact-map-card__head">
+              <span>
+                <i className="fa-solid fa-location-dot" aria-hidden="true" />
+                موقعنا على الخريطة
+              </span>
+              <a
+                href="https://www.google.com/maps/search/?api=1&query=Global%20Experts%20for%20Industrial%20Development%20%26%20Green%20Consultations%20UAE"
+                target="_blank"
+                rel="noreferrer"
+              >
+                فتح الخريطة
+              </a>
+            </div>
+            <iframe
+              title="موقع خبراء التطوير الصناعي والاستشارات الخضراء على الخريطة"
+              src="https://www.google.com/maps?q=Global%20Experts%20for%20Industrial%20Development%20%26%20Green%20Consultations%20UAE&output=embed"
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
           </div>
         </div>
       </section>
@@ -783,11 +1667,11 @@ export function ServicesShowcasePage() {
             <span className="consultation-success-modal__icon" aria-hidden="true">
               <i className="fa-solid fa-triangle-exclamation" />
             </span>
-            <h3 id="consultation-whatsapp-title">رقم الجوال غير مسجل في واتساب</h3>
-            <p>يرجى إدخال رقم واتساب صحيح حتى نستطيع التواصل معك في أسرع وقت.</p>
+            <h3 id="consultation-whatsapp-title">رقم الواتساب غير مسجل في واتساب</h3>
+            <p>يرجى إدخال رقم واتساب صحيح حتى نستطيع التواصل معك.</p>
             <button type="button" onClick={() => setConsultationStatus("idle")}>
               <i className="fa-solid fa-pen" aria-hidden="true" />
-              تعديل رقم الجوال
+              تعديل رقم الواتساب
             </button>
           </div>
         </div>

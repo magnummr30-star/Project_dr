@@ -267,8 +267,9 @@ export const serviceDetails = {
     suitableFor: ["مصانع ومباني صناعية جديدة.", "مشاريع تطوير بنية قائمة.", "ملاك يريدون تقليل تكلفة التشغيل."],
     videoTitle: "فيديو يوضح عناصر البنية الخضراء داخل المشروع.",
     visual: {
-      ...visuals.greenArchitecture,
-      alt: "مبنى مستدام بواجهة خضراء وتصميم حديث"
+      url: "/images/service-web/pic.jpeg",
+      source: "",
+      alt: "استشارات هندسية للبنية الخضراء"
     }
   },
   "economic-and-technical-feasibility": {

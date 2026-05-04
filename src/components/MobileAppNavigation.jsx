@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
-export function MobileAppNavigation({ title, subtitle, links }) {
+export function MobileAppNavigation({ title, subtitle, activeHref, links, onNavigate }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -33,6 +33,11 @@ export function MobileAppNavigation({ title, subtitle, links }) {
 
   const closeMenu = () => setIsOpen(false);
 
+  const handleLinkClick = (event) => {
+    onNavigate?.(event);
+    closeMenu();
+  };
+
   const portalContent = (
     <div className={`mobile-app-menu${isOpen ? " is-open" : ""}`} aria-hidden={!isOpen}>
       <button className="mobile-app-menu__backdrop" type="button" onClick={closeMenu} aria-label="إغلاق القائمة" />
@@ -49,7 +54,13 @@ export function MobileAppNavigation({ title, subtitle, links }) {
         </div>
         <nav className="mobile-app-menu__links" aria-label="روابط التطبيق">
           {links.map((link) => (
-            <a href={link.href} key={`${link.href}-${link.label}`} onClick={closeMenu}>
+            <a
+              aria-current={activeHref === link.href ? "location" : undefined}
+              className={activeHref === link.href ? "is-active" : undefined}
+              href={link.href}
+              key={`${link.href}-${link.label}`}
+              onClick={handleLinkClick}
+            >
               <i className={link.icon} aria-hidden="true" />
               <span>{link.label}</span>
             </a>

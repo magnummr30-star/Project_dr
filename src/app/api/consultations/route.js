@@ -35,13 +35,19 @@ function getServiceSelection(serviceSlug) {
 export async function POST(request) {
   const body = await request.json();
   const selectedService = getServiceSelection(cleanText(body.serviceSlug));
+  const mobilePhone = cleanText(body.mobilePhone);
+  const whatsappPhone = cleanText(body.phone);
 
   const record = {
     id: `consult-${Date.now()}`,
     createdAt: new Date(),
     fullName: cleanText(body.fullName),
-    phone: cleanText(body.phone),
-    phoneNormalized: normalizeWhatsAppPhone(body.phone),
+    mobilePhone,
+    mobilePhoneNormalized: mobilePhone ? normalizeWhatsAppPhone(mobilePhone) : "",
+    phone: whatsappPhone,
+    phoneNormalized: normalizeWhatsAppPhone(whatsappPhone),
+    whatsappPhone,
+    whatsappPhoneNormalized: normalizeWhatsAppPhone(whatsappPhone),
     email: cleanEmail(body.email),
     location: cleanText(body.location),
     investorType: cleanText(body.investorType),
@@ -55,7 +61,7 @@ export async function POST(request) {
     source: "website-consultation-form"
   };
 
-  if (!record.fullName || !record.phone || !record.serviceSlug) {
+  if (!record.fullName || !record.mobilePhone || !record.phone || !record.serviceSlug) {
     return Response.json({ error: "Missing required fields" }, { status: 400 });
   }
 
@@ -63,8 +69,12 @@ export async function POST(request) {
     const db = await getMongoDb();
     const collection = db.collection(collectionName);
     const duplicateChecks = [
+      { mobilePhone: record.mobilePhone },
+      { mobilePhoneNormalized: record.mobilePhoneNormalized },
       { phone: record.phone },
-      { phoneNormalized: record.phoneNormalized }
+      { phoneNormalized: record.phoneNormalized },
+      { whatsappPhone: record.whatsappPhone },
+      { whatsappPhoneNormalized: record.whatsappPhoneNormalized }
     ];
 
     if (record.email) {
@@ -83,7 +93,7 @@ export async function POST(request) {
       );
     }
 
-    const whatsappCheck = await checkWhatsAppNumber(record.phone);
+    const whatsappCheck = await checkWhatsAppNumber(record.whatsappPhone);
 
     if (!whatsappCheck.isValid) {
       return Response.json(
@@ -96,6 +106,7 @@ export async function POST(request) {
     }
 
     record.phoneNormalized = whatsappCheck.phone;
+    record.whatsappPhoneNormalized = whatsappCheck.phone;
     record.whatsappChatId = whatsappCheck.chatId;
     record.whatsappVerifiedAt = new Date();
     record.clientLoginPhone = whatsappCheck.phone;

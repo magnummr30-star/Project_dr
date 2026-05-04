@@ -6,8 +6,8 @@ import { useEffect, useRef, useState } from "react";
 const contactItems = [
   {
     label: "رقم الاتصال",
-    value: "05013646355",
-    href: "tel:05013646355",
+    value: "0503646355",
+    href: "tel:0503646355",
     icon: "fa-solid fa-phone",
     type: "phone",
     order: 1

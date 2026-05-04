@@ -3,13 +3,20 @@ import { services } from "@/data/services";
 import {
   absoluteUrl,
   companyName,
-  defaultSeoDescription,
   jsonLdScript,
   organizationSchema,
   serviceUrl,
   siteUrl,
   websiteSchema
 } from "@/lib/seo";
+
+const homeDescription =
+  "حلول استشارية واستثمارية لتأسيس المشاريع ودراسات الجدوى والتمويل والتراخيص والاستشارات الهندسية والصناعية.";
+
+export const metadata = {
+  title: `استشارات وتأسيس المشاريع | ${companyName}`,
+  description: homeDescription
+};
 
 const homeStructuredData = {
   "@context": "https://schema.org",
@@ -21,7 +28,7 @@ const homeStructuredData = {
       "@id": `${siteUrl}/#webpage`,
       url: `${siteUrl}/`,
       name: companyName,
-      description: defaultSeoDescription,
+      description: homeDescription,
       inLanguage: "ar-AE",
       isPartOf: {
         "@id": `${siteUrl}/#website`
@@ -57,7 +64,7 @@ export default function Home() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={jsonLdScript(homeStructuredData)} />
-      <ServicesShowcasePage />
+      <ServicesShowcasePage showParallelAdditions />
     </>
   );
 }

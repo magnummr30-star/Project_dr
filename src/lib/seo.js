@@ -6,7 +6,7 @@ export const companyEmail = "info@globalgreenconsults.com";
 export const whatsappNumber = "0556260392";
 export const whatsappInternationalNumber = "+971556260392";
 export const companyPhone = "065613114";
-export const directPhone = "05013646355";
+export const directPhone = "0503646355";
 
 export const defaultSeoDescription =
   "خدمات استشارية لتأسيس وتطوير المشاريع الصناعية والمستدامة في الإمارات، من الفكرة ودراسة الجدوى والتراخيص إلى التمويل والتشغيل.";

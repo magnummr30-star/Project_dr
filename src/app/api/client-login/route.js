@@ -1,3 +1,4 @@
+import { createClientAuthCookie, createClientAuthToken } from "@/lib/clientAuthSession";
 import { getMongoDb } from "@/lib/mongodb";
 import { normalizeWhatsAppPhone } from "@/lib/ultramsg";
 
@@ -7,6 +8,21 @@ const collectionName = process.env.MONGODB_CONSULTATIONS_COLLECTION || "consulta
 
 function cleanText(value) {
   return String(value ?? "").replace(/\s+/g, " ").trim();
+}
+
+function mapClientDocument(document) {
+  const fileId = String(document.fileId);
+  const viewUrl = `/api/client-documents?fileId=${encodeURIComponent(fileId)}`;
+
+  return {
+    fileId,
+    originalName: document.originalName || document.fileName || "ملف مرفق",
+    documentType: document.documentType || "غير محدد",
+    mimeType: document.mimeType || "",
+    size: document.size || 0,
+    uploadedAt: document.uploadedAt || "",
+    viewUrl
+  };
 }
 
 export async function POST(request) {
@@ -30,17 +46,39 @@ export async function POST(request) {
       return Response.json({ error: "Invalid login data" }, { status: 401 });
     }
 
+    const clientDocuments = Array.isArray(clientRecord.clientDocuments) ? clientRecord.clientDocuments : [];
+    const clientPhone = clientRecord.phone || clientRecord.clientLoginPhone;
+    const clientPortalToken = createClientAuthToken({
+      consultationId: clientRecord.id,
+      phone: clientRecord.clientLoginPhone || normalizeWhatsAppPhone(clientPhone)
+    });
+
     return Response.json({
       ok: true,
       client: {
         clientName: clientRecord.fullName || "عميل الشركة",
-        phone: clientRecord.phone || clientRecord.clientLoginPhone,
+        phone: clientPhone,
+        email: clientRecord.email || "",
+        location: clientRecord.location || "",
+        investorType: clientRecord.investorType || "",
+        consultationNeed: clientRecord.consultationNeed || "",
         projectCode: clientRecord.id,
         serviceTitle: clientRecord.serviceTitle || "استشارة متخصصة",
         projectStage: clientRecord.projectStage || "",
         contactWindow: clientRecord.contactWindow || "",
+        message: clientRecord.message || "",
         requestStatus: clientRecord.status || "new",
+        consultationStatus: "جاري الاتصال",
+        consultationDate: clientRecord.createdAt,
+        uploadedDocumentsCount: clientDocuments.length,
+        uploadedDocuments: clientDocuments.map((document) => mapClientDocument(document)),
+        lastDocumentsUploadedAt: clientRecord.clientDocumentsUpdatedAt || "",
+        clientPortalToken,
         createdAt: clientRecord.createdAt
+      }
+    }, {
+      headers: {
+        "Set-Cookie": createClientAuthCookie(clientPortalToken)
       }
     });
   } catch (error) {
